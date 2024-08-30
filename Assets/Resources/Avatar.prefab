@@ -2332,8 +2332,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30b8a84b455644146b96676bba8a06c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 10
   rotateSpeed: 500
+  lookAroundSpeed: 10
   jumpForce: 100
   body: {fileID: 1838079696793515070}
   anim: {fileID: 6473216492945838398}
