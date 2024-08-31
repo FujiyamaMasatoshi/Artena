@@ -4,9 +4,9 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 
-public class PlayerController : MonoBehaviourPunCallbacks
+public class Pun_PlayerController : MonoBehaviourPunCallbacks
 {
-    
+
 
     [SerializeField, Header("移動スピード")] private float moveSpeed = 5.0f;
     [SerializeField, Header("bodyの回転スピード")] private float rotateSpeed = 500f;
@@ -18,8 +18,11 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        Moving();
-        Look();
+        if (photonView.IsMine)
+        {
+            Moving();
+            Look();
+        }
     }
 
     private void Moving()
@@ -28,7 +31,7 @@ public class PlayerController : MonoBehaviourPunCallbacks
         var forward = Input.GetAxis("Vertical");
         var right = Input.GetAxis("Horizontal");
 
-        var direction = (transform.forward*forward + transform.right * right).normalized;
+        var direction = (transform.forward * forward + transform.right * right).normalized;
 
         // 移動
         transform.localPosition += direction * moveSpeed * Time.deltaTime;
@@ -50,28 +53,6 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
         if (right != 0)
         {
-            //if (Mathf.Abs(forward) < 0.3f)
-            //{
-            //    body.transform.localEulerAngles = new Vector3(0f, body.transform.localScale.z * right * 90f, 0f);
-            //}
-            //else
-            //{
-            //    body.transform.localEulerAngles = new Vector3(0f, body.transform.localScale.z * right * 45f, 0f);
-
-            //    //// when press w
-            //    //if (body.transform.localScale.z > 0)
-            //    //{
-            //    //    body.transform.localEulerAngles = new Vector3(0f, right * 45f, 0f);
-            //    //}
-            //    //// when press s
-            //    //else
-            //    //{
-            //    //    body.transform.localEulerAngles = new Vector3(0f, right * (-45f), 0f);
-            //    //}
-
-            //}
-
-            // before update
             body.transform.localEulerAngles = new Vector3(0f, body.transform.localScale.z * right * 90f, 0f);
         }
 

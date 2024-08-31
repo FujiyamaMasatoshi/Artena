@@ -76,3 +76,4 @@ crashlytics-build.properties
 test*
 Assets/TextMesh Pro/JapaneseFonts
 Assets/ImportedAssets
+Assets/StreamingAssets
