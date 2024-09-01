@@ -8,9 +8,8 @@ public class CpuBattler : MonoBehaviour
 {
     [SerializeField] private SkillGenerator skillGenerator = null;
 
-
-    // test
-    [SerializeField] private TextMeshProUGUI testText = null;
+    public string cpuName = "試練の番人";
+    public int hp = 1000;
 
 
     public Skill GetGeneratedSkill()
@@ -25,6 +24,12 @@ public class CpuBattler : MonoBehaviour
         }
     }
 
+    // 生成したスキルをクリア
+    public void ClearGeneratedSkill()
+    {
+        skillGenerator.ClearGeneratedSkill();
+    }
+
     // ボタンクリックしたら呼び出す
     public void GenerateRandomSkill()
     {
@@ -34,21 +39,4 @@ public class CpuBattler : MonoBehaviour
         }
     }
 
-    // test
-    private void TestDisplay()
-    {
-        if (skillGenerator.GetGeneratedSkill() != null)
-        {
-            // test
-            testText.text = $"skillName: {skillGenerator.GetGeneratedSkill().skillName}\n";
-            testText.text += $"cute: {skillGenerator.GetGeneratedSkill().parameters.cute}\n";
-            testText.text += $"cool: {skillGenerator.GetGeneratedSkill().parameters.cool}\n";
-            testText.text += $"unique: {skillGenerator.GetGeneratedSkill().parameters.unique}\n";
-            testText.text += $"att: {skillGenerator.GetGeneratedSkill().Attribute()}\n";
-        }
-    }
-    private void Update()
-    {
-        TestDisplay();
-    }
 }

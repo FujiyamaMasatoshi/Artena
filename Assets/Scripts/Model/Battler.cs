@@ -9,9 +9,9 @@ public class Battler : MonoBehaviour
     [SerializeField] private SkillGenerator skillGenerator = null;
 
 
-    // test
-    [SerializeField] private TextMeshProUGUI testText = null;
-
+    // status
+    public string playerName = "Max";
+    public int hp = 1000;
 
 
     // Battler側でスキル生成メソッドを呼び出す
@@ -27,6 +27,11 @@ public class Battler : MonoBehaviour
         }
     }
 
+    // 生成したスキルをクリア
+    public void ClearGeneratedSkill()
+    {
+        skillGenerator.ClearGeneratedSkill();
+    }
 
     public Skill GetGeneratedSkill()
     {
@@ -40,21 +45,4 @@ public class Battler : MonoBehaviour
         }
     }
 
-    // test
-    private void TestDisplay()
-    {
-        if (skillGenerator.GetGeneratedSkill() != null)
-        {
-            // test
-            testText.text = $"skillName: {skillGenerator.GetGeneratedSkill().skillName}\n";
-            testText.text += $"cute: {skillGenerator.GetGeneratedSkill().parameters.cute}\n";
-            testText.text += $"cool: {skillGenerator.GetGeneratedSkill().parameters.cool}\n";
-            testText.text += $"unique: {skillGenerator.GetGeneratedSkill().parameters.unique}\n";
-            testText.text += $"att: {skillGenerator.GetGeneratedSkill().Attribute()}\n";
-        }
-    }
-    private void Update()
-    {
-        TestDisplay();
-    }
 }

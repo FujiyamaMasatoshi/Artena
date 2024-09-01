@@ -84,8 +84,23 @@ public class SkillGenerator : MonoBehaviour
             matchedText = matchedText.Replace("\n", "");
             Debug.Log($"matched text: {matchedText}");
 
+
             // 抽出したパラメーターをJson形式に変換し、SkillParamsに変換
-            SkillParams param = JsonUtility.FromJson<SkillParams>(matchedText);
+            SkillParams param = null;
+
+            try
+            {
+                param = JsonUtility.FromJson<SkillParams>(matchedText);
+            }
+            // if parse is failed ... -> random rule based method
+            catch (System.Exception e)
+            {
+                var cute = Random.Range(0, 101);
+                var cool = Random.Range(0, 101);
+                var unique = Random.Range(0, 101);
+                param = new SkillParams(cute, cool, unique);
+            }
+            
 
             // SkillParamsとskillNameからSkillを生成
             Skill skill = new Skill(skillName, param);
@@ -123,6 +138,12 @@ public class SkillGenerator : MonoBehaviour
     public Skill GetGeneratedSkill()
     {
         return generatedSkill;
+    }
+
+    // 生成したスキルをクリア
+    public void ClearGeneratedSkill()
+    {
+        generatedSkill = null;
     }
 
     // **************************************************

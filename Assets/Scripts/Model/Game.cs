@@ -13,7 +13,7 @@ public class Game : MonoBehaviour
     // 3. 終了のフラグでゲームの終了を判断
     // ************************************
 
-    [SerializeField, Header("パフォーマンスポイントの倍率(>1)")] private float ppRate = 1.1f;
+    [SerializeField, Header("パフォーマンスポイントの倍率(>1)")] private float skillPointRate = 1.1f;
     [SerializeField, Header("最大ターン数")] private int maxTurn = 10;
 
     // ゲームで生成したSkillを保持するリスト
@@ -85,24 +85,6 @@ public class Game : MonoBehaviour
         // 
     }
 
-    // ゲームフェーズを進める
-    public void NextGamePhase()
-    {
-        if (isFinished == false)
-        {
-            if (currentPhase == GamePhase.GameStart) currentPhase = GamePhase.TurnStart;
-            else if (currentPhase == GamePhase.TurnStart)
-            {
-                if (turn > maxTurn) currentPhase = GamePhase.GameEnd;
-                else currentPhase = GamePhase.Generate;
-            }
-            else if (currentPhase == GamePhase.Generate) currentPhase = GamePhase.Execute;
-            else if (currentPhase == GamePhase.Execute) currentPhase = GamePhase.Result;
-            else if (currentPhase == GamePhase.Result) currentPhase = GamePhase.TurnStart;
-            else if (currentPhase == GamePhase.GameEnd) isFinished = true;
-        }
-        
-    }
 
     // 生成したスキルを`generatedSkills`に追加
     public void AddSkill(Skill skill)
@@ -132,11 +114,36 @@ public class Game : MonoBehaviour
     // 生成されたSkillからパフォーマンスポイントを計算する
     // スキルの属性が連続して同じ場合、ポイントを加算していく
     // このメソッドはAddSkillを呼び出した後に呼び出すこと
-    // +- continuousAttributeの更新ができていないため
-    public void ComputePerformancePoint(Skill nowGeneratedSkill)
+    //  - continuousAttributeの更新ができていないため
+    public int ComputeSkillPoint(Skill skill)
     {
+        int skillPoint = 0;
+        // skillの属性は等倍、それ以外は0.5倍加算してポイントにする
+        // continuousAttributeを考えて、属性の倍率計算する
+        string skillAttribute = skill.Attribute();
 
+        if (skillAttribute == "cute") skillPoint += (int)(skill.parameters.cute + (skill.parameters.cool + skill.parameters.unique) * 0.5f);
+        else if (skillAttribute == "cool") skillPoint += (int)(skill.parameters.cool + (skill.parameters.cute + skill.parameters.unique) * 0.5f);
+        else skillPoint += (int)(skill.parameters.unique + (skill.parameters.cute + skill.parameters.cool) * 0.5f);
+
+        float ratio = Mathf.Pow(skillPointRate, continuousAttribute.Item2);
+
+        skillPoint = (int)(skillPoint * ratio); //int型にキャスト
+
+        return skillPoint;
     }
 
+
+    // 生成したスキルを表示させる
+    public string SkillDetails(Skill skill)
+    {
+        string text = $"skillName: {skill.skillName}\n";
+        text += $"cute: {skill.parameters.cute}\n";
+        text += $"cool: {skill.parameters.cool}\n";
+        text += $"unique: {skill.parameters.unique}\n";
+        text += $"att: {skill.Attribute()}\n";
+        text += $"skillPoint: {ComputeSkillPoint(skill)}";
+        return text;
+    }
 
 }

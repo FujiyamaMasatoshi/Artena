@@ -9,6 +9,13 @@ public class SkillParams
     public int cute;
     public int cool;
     public int unique;
+
+    public SkillParams(int cute, int cool, int unique)
+    {
+        this.cute = cute;
+        this.cool = cool;
+        this.unique = unique;
+    }
 }
 
 // スキルクラス
@@ -34,5 +41,6 @@ public class Skill
         else if (parameters.unique >= parameters.cool && parameters.unique >= parameters.cute) return "unique";
         else return "cool";
     }
+
 
 }
