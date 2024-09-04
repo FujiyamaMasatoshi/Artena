@@ -8,8 +8,6 @@ using System.Text.RegularExpressions;
 
 public class SkillGenerator : MonoBehaviour
 {
-    // model path
-    [SerializeField] private string modelPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Model/Llama-3-ELYZA-JP-8B-Q3_K_L.gguf");
 
 
     // prompts
@@ -32,9 +30,15 @@ public class SkillGenerator : MonoBehaviour
 
     public bool isGenerating = false;
 
-    private void Start()
+    //private void Start()
+    //{
+    //    llm.LoadLLM();
+    //}
+
+    public void InitSkillGenerator()
     {
-        llm.LoadLLM(modelPath);
+        llm.LoadLLM();
+
     }
 
 
@@ -95,6 +99,7 @@ public class SkillGenerator : MonoBehaviour
             // if parse is failed ... -> random rule based method
             catch (System.Exception e)
             {
+                Debug.Log("failed to parse in json");
                 var cute = Random.Range(0, 101);
                 var cool = Random.Range(0, 101);
                 var unique = Random.Range(0, 101);
@@ -188,20 +193,32 @@ public class SkillGenerator : MonoBehaviour
 
         generatedRandomSkillName = ExtractSkillName(skillNameLlmOut);
 
-        // ****************************
-        // 2. Skillを生成
-        // ****************************
-        generatedSkill = null; // 前回生成したスキルをリセット
+        // 空白の場合はもう一度呼び出して再生成を行う
+        if (string.IsNullOrEmpty(generatedRandomSkillName) || generatedRandomSkillName.Trim().Length == 0)
+        {
+            Debug.Log("生成されたスキルが空白です。再生成を実行します");
+            GenerateRandomSkill();
+        }
+        else
+        {
+            // ****************************
+            // 2. Skillを生成
+            // ****************************
+            generatedSkill = null; // 前回生成したスキルをリセット
 
-        //isGenerating = true; // 推論開始
-        SetFewShotPrompt();
-        CreatePrompt(this.generatedRandomSkillName); //ランダム生成したスキル名を使用
-        var skillLlmOut = await Task.Run(() => llm.Run(userPrompt, maxTokens, temperature));
+            //isGenerating = true; // 推論開始
+            SetFewShotPrompt();
+            CreatePrompt(this.generatedRandomSkillName); //ランダム生成したスキル名を使用
+            var skillLlmOut = await Task.Run(() => llm.Run(userPrompt, maxTokens, temperature));
 
-        isGenerating = false; //推論終了
+            isGenerating = false; //推論終了
 
-        // 生成したSkillをセット
-        generatedSkill = ExtractSkill(this.generatedRandomSkillName, skillLlmOut);
+            // 生成したSkillをセット
+            generatedSkill = ExtractSkill(this.generatedRandomSkillName, skillLlmOut);
+        }
+
+        
+        
     }
 
     //ランダムで生成されたスキル名を抽出する

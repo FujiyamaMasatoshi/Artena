@@ -107,7 +107,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8de34d13386244265b0ed93ae112f31b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  modelPath: /Users/fujiyamax/UnityProject/SkillCreateBattler/Assets/StreamingAssets/Model/Llama-3-ELYZA-JP-8B-Q3_K_L.gguf
   systemPrompt: "\u3042\u306A\u305F\u306F\u5FE0\u5B9F\u306A\u30A2\u30B7\u30B9\u30BF\u30F3\u30C8\u3067\u3059\u3002\u3042\u306A\u305F\u306B\u306F\u3001\u3053\u308C\u304B\u3089\u30B9\u30AD\u30EB\u540D\u3068\u3057\u3066\u30E6\u30FC\u30B6\u30FC\u304C\u8003\u3048\u305F\u5358\u8A9E\u304C\u4E0E\u3048\u3089\u308C\u307E\u3059\u3002\u305D\u306E\u5358\u8A9E\u3092\u53EF\u611B\u3044\u3089\u3057\u3055\u3001\u304B\u3063\u3053\u3088\u3055\u3001\u30E6\u30CB\u30FC\u30AF\u3055\u306E3\u3064\u306E\u8996\u70B9\u304B\u30890\u304B\u3089100\u306E\u9593\u3067\u70B9\u6570\u3092\u3064\u3051\u3066\u304F\u3060\u3055\u3044\u3002\n"
   llm: {fileID: 6769691873791944590}
   maxTokens: 32
@@ -1032,6 +1031,55 @@ Transform:
   - {fileID: 5679449769705951898}
   m_Father: {fileID: 1240347770826463509}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3931972442431541221
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5880071378241334770}
+  - component: {fileID: 417206749718871791}
+  m_Layer: 0
+  m_Name: effectGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5880071378241334770
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3931972442431541221}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 757.4781, y: 882.73114, z: -30.213953}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8215393278493373056}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &417206749718871791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3931972442431541221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 808bc9789b8484d3da6bf1552f3dcc61, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  effect: {fileID: 2062114089827847701, guid: d8935f51b01344dbab159b13edb89a92, type: 3}
+  abovePos: {x: 0, y: 2, z: 0}
+  efSpeed: 5
+  maxScale: {x: 5, y: 5, z: 5}
+  isEffecting: 0
 --- !u!1 &4525338503889026205
 GameObject:
   m_ObjectHideFlags: 0
@@ -1688,6 +1736,7 @@ GameObject:
   - component: {fileID: 8699340359624806610}
   - component: {fileID: 3882261994100532121}
   - component: {fileID: 6285498413254400588}
+  - component: {fileID: 8407053176006909438}
   m_Layer: 0
   m_Name: Battler
   m_TagString: Untagged
@@ -1710,6 +1759,7 @@ Transform:
   m_Children:
   - {fileID: 7199280831428038588}
   - {fileID: 419901637564166424}
+  - {fileID: 5880071378241334770}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -33.33, z: 0}
 --- !u!95 &666234642408957780
@@ -1797,7 +1847,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputField: {fileID: 0}
   skillGenerator: {fileID: 8599829183887816606}
-  testText: {fileID: 0}
+  effectGenerator: {fileID: 417206749718871791}
+  playerName: Max
+  maxHp: 1000
+  hp: 1000
+  isGenerating: 0
+  isExecute: 0
+--- !u!114 &8407053176006909438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6216979051397078135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 732c3c884f5a14a23af8bb8e573a9789, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  battler: {fileID: 6285498413254400588}
+  anim: {fileID: 666234642408957780}
 --- !u!1 &6311109369633398046
 GameObject:
   m_ObjectHideFlags: 0
@@ -2729,6 +2798,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7199280831428038588}
     m_Modifications:
+    - target: {fileID: 3550045829523264642, guid: a8a5c6480c48d476b9de89dd455586be, type: 3}
+      propertyPath: modelPath
+      value: Assets/StreamingAssets/Model/stabilityai-japanese-stablelm-3b-4e1t-instruct-Q4_0.gguf
+      objectReference: {fileID: 0}
     - target: {fileID: 5601273858673568622, guid: a8a5c6480c48d476b9de89dd455586be, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1016.0324

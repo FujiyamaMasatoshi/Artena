@@ -18,8 +18,18 @@ public class PlayerController : MonoBehaviourPunCallbacks
 
     private void Update()
     {
-        Moving();
-        Look();
+        if (!MainSceneManager.instance.isEventDoing)
+        {
+            // 動きメソッド
+            Moving();
+            Look();
+        }
+        // イベント中の場合
+        else
+        {
+            // アニメーションの速度を0にする
+            anim.SetFloat("Speed", 0f);
+        }
     }
 
     private void Moving()

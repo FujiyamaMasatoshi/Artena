@@ -14,6 +14,6 @@ public class UI_TB_GameTurn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        text.text = "ターン "+game.turn.ToString();
+        text.text = game.turn.ToString();
     }
 }
