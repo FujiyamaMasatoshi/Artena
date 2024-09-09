@@ -7,7 +7,7 @@ public class Battler : MonoBehaviour
 {
 
     [SerializeField] private TMP_InputField inputField = null;
-    [SerializeField] private SkillGenerator skillGenerator = null;
+    [SerializeField] protected SkillGenerator skillGenerator = null;
     [SerializeField] private UI_EffectGenerator effectGenerator = null;
 
     // status

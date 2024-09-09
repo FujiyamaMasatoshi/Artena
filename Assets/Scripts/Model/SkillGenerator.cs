@@ -37,7 +37,9 @@ public class SkillGenerator : MonoBehaviour
 
     public void InitSkillGenerator()
     {
-        llm.LoadLLM();
+        // LLMWrapperの初期化メソッドを呼び出してロードを行う
+        //llm.LoadLLM();
+        llm.InitLLM();
 
     }
 

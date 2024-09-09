@@ -193,8 +193,6 @@ public class TrainingBattle : MonoBehaviour
         Debug.Log("Execute");
         // 1. battlerとcpuのアニメーションを更新
         // 2. スキルが生成完了しているので、game.AddSkillを呼び出してスキルを追加する
-        // 3. battlerとcpuのskillPointを計算 -> TB_GameManagerに書き込む
-        // 4. 計算した結果から、それぞれのHPを更新
 
         // 1. battlerとcpuのアニメーションフラグを更新
         battler.StartExecute(cpu.transform);
@@ -205,29 +203,32 @@ public class TrainingBattle : MonoBehaviour
         // 2. 
         game.AddSkill(generatedSkills.Item1);
 
-        // 3
-        var battlerSkillPoint = game.ComputeSkillPoint(generatedSkills.Item1);
-        var cpuSkillPoint = game.ComputeSkillPoint(generatedSkills.Item2);
-        TB_GameManager.instance.battlerSkillPoints += battlerSkillPoint;
-        TB_GameManager.instance.cpuSkillPoints += cpuSkillPoint;
-
-        // 4
-        // battlerのHPを更新
-        battler.hp = (int)Mathf.Max(0, battler.hp - cpuSkillPoint);
-        cpu.hp = (int)Mathf.Max(0, cpu.hp - battlerSkillPoint);
 
         
     }
 
     private void Result()
     {
+        Debug.Log("Result");
+
+        // 1. batterとcpuのskillPointを計算 -> TB_GameManagerに書き込む
+        // 2. 計算した結果から、それぞれのHPを更新
+
+        // 1
+        var battlerSkillPoint = game.ComputeSkillPoint(generatedSkills.Item1);
+        var cpuSkillPoint = game.ComputeSkillPoint(generatedSkills.Item2);
+        TB_GameManager.instance.battlerSkillPoints += battlerSkillPoint;
+        TB_GameManager.instance.cpuSkillPoints += cpuSkillPoint;
+
+        // 2
+        // battlerのHPを更新
+        battler.hp = (int)Mathf.Max(0, battler.hp - cpuSkillPoint);
+        cpu.hp = (int)Mathf.Max(0, cpu.hp - battlerSkillPoint);
+
         // battlerとcpuのアニメーションフラグを更新
         battler.isExecute = false;
         cpu.isExecute = false;
 
-        Debug.Log("Result");
-        // resultで表示するテキストの更新などを行う
-        // 
         
     }
 

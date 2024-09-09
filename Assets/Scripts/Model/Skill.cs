@@ -16,6 +16,17 @@ public class SkillParams
         this.cool = cool;
         this.unique = unique;
     }
+
+    // 各種パラメータを合計値が100となるように正規化
+    // 合計値がnSumとなるように正規化を行う
+    public void NormalizeParams(float nSum=100f)
+    {
+        float sum = (float)(this.cute + this.cool + this.unique);
+
+        this.cute = (int)((float)this.cute / sum * nSum);
+        this.cool = (int)((float)this.cool / sum * nSum);
+        this.unique = (int)((float)this.unique / sum * nSum);
+    }
 }
 
 // スキルクラス
@@ -30,6 +41,7 @@ public class Skill
     {
         this.skillName = skillName;
         this.parameters = parameters;
+        parameters.NormalizeParams();
     }
 
 
