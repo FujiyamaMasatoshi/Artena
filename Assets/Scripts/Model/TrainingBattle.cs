@@ -19,8 +19,6 @@ public class TrainingBattle : MonoBehaviour
     
     [SerializeField] private TMP_InputField inputField = null; // battler用のinputField
 
-    // 生成したスキル
-    private (Skill, Skill) generatedSkills = (null, null); //(battler, cpu)
     public bool isGenerated = false; // スキルが生成し終わったか -- 実行して良いかどうか
     public bool isGenerating = false; // スキルが生成中かどうか
     public bool isExecuted = false; // スキル実行終了したかどうか -> エフェクトも終了済み
@@ -35,7 +33,7 @@ public class TrainingBattle : MonoBehaviour
         NewGame();
     }
 
-
+    // Initialize
     public void NewGame()
     {
         InitTrainingBattle(); // game init is in this method   
@@ -52,7 +50,6 @@ public class TrainingBattle : MonoBehaviour
         TB_GameManager.instance.InitGameData();
 
         // 各種メンバ変数を初期化
-        generatedSkills = (null, null);
         isGenerated = false;
         isGenerating = false;
         isMouseButtonDown = false;
@@ -99,7 +96,7 @@ public class TrainingBattle : MonoBehaviour
                 // Generateフェーズ
                 case Game.GamePhase.Generate:
                     //Generate(); -- ボタンクリックで呼び出す
-                    yield return new WaitUntil(() => isGenerated && isMouseButtonDown);
+                    yield return new WaitUntil(() => isGenerated/* && isMouseButtonDown*/);
                     isGenerated = false;
                     isMouseButtonDown = false;
                     game.currentPhase = Game.GamePhase.Execute; //状態遷移
@@ -116,7 +113,8 @@ public class TrainingBattle : MonoBehaviour
                 // Resultフェーズ
                 case Game.GamePhase.Result:
                     Result();
-                    yield return new WaitUntil(() => isMouseButtonDown);
+                    // yield return new WaitUntil(() => isMouseButtonDown);
+                    yield return new WaitForSeconds(1.0f);
                     isMouseButtonDown = false;
                     TurnStartOrGameEnd();
                     break;
@@ -157,29 +155,39 @@ public class TrainingBattle : MonoBehaviour
 
     public void Generate()
     {
-        // inputFieldに入力がない場合は、実行しない
-        if (inputField.text == "" || inputField.text == null)
+        // Generateフェーズでしか動作させない
+        if (game.currentPhase == Game.GamePhase.Generate)
         {
-            Debug.Log("スキル名を入力してください");
+            // inputFieldに入力がない場合は、実行しない
+            if (inputField.text == "" || inputField.text == null)
+            {
+                Debug.Log("スキル名を入力してください");
+            }
+            else
+            {
+                //Debug.Log("Generate");
+                isGenerating = true; // 生成中
+                isGenerated = false; // まだ生成完了していない
+
+                // battlerとcpuのflagを更新
+                battler.isGenerating = true;
+                cpu.isGenerating = true;
+
+                // マウスの状態をリセット
+                isMouseButtonDown = false; // スキル生成前にクリックしてしまった状態をリセット
+
+                // スキル生成
+                if (game.generatedSkillInGeneratePhase.Item1 == null)
+                {
+                    battler.GenerateSkill();
+                }
+                if (game.generatedSkillInGeneratePhase.Item2 == null)
+                {
+                    cpu.GenerateRandomSkill();
+                }
+            }
         }
-        else
-        {
-            //Debug.Log("Generate");
-            isGenerating = true; // 生成中
-            isGenerated = false; // まだ生成完了していない
-
-            // battlerとcpuのflagを更新
-            battler.isGenerating = true;
-            cpu.isGenerating = true;
-
-            // マウスの状態をリセット
-            isMouseButtonDown = false; // スキル生成前にクリックしてしまった状態をリセット
-
-            // スキル生成
-            battler.GenerateSkill();
-            cpu.GenerateRandomSkill();
-
-        }
+        
         
     }
 
@@ -201,9 +209,8 @@ public class TrainingBattle : MonoBehaviour
         cpu.isExecute = true;
 
         // 2. 
-        game.AddSkill(generatedSkills.Item1);
-
-
+        game.AddSkill(game.generatedSkillInGeneratePhase.Item1);
+        
         
     }
 
@@ -215,10 +222,20 @@ public class TrainingBattle : MonoBehaviour
         // 2. 計算した結果から、それぞれのHPを更新
 
         // 1
-        var battlerSkillPoint = game.ComputeSkillPoint(generatedSkills.Item1);
-        var cpuSkillPoint = game.ComputeSkillPoint(generatedSkills.Item2);
+        var battlerSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item1);
+        var cpuSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item2);
+
         TB_GameManager.instance.battlerSkillPoints += battlerSkillPoint;
         TB_GameManager.instance.cpuSkillPoints += cpuSkillPoint;
+
+        // ダメージエフェクトを生成
+        // battlerのダメージ生成
+        Debug.Log($"cpuSkillPoint: {cpuSkillPoint}");
+        Debug.Log($"battlerSkillPoint: {battlerSkillPoint}");
+        battler.DisplayDamageEffect(cpuSkillPoint);
+        // cpuのダメージ生成
+        cpu.DisplayDamageEffect(battlerSkillPoint);
+
 
         // 2
         // battlerのHPを更新
@@ -235,6 +252,10 @@ public class TrainingBattle : MonoBehaviour
     // ゲーム終了か継続かを判断し、状態遷移を行う
     private void TurnStartOrGameEnd()
     {
+        // ダメージ表記を消す
+        battler.ClearDamageEffect();
+        cpu.ClearDamageEffect();
+
         // Executeで更新されたHPをもとに、GameEnd or TurnStartのどちらかにゲーム状態を更新
         if (battler.hp <= 0 || cpu.hp <= 0 || game.turn >= maxTurn) game.currentPhase = Game.GamePhase.GameEnd;
         else game.currentPhase = Game.GamePhase.TurnStart;
@@ -266,18 +287,17 @@ public class TrainingBattle : MonoBehaviour
         cpu.ClearGeneratedSkill();
 
         // TrainingBattleの方をクリア
-        generatedSkills.Item1 = null;
-        generatedSkills.Item2 = null;
+        game.generatedSkillInGeneratePhase = (null, null);
     }
 
     // 生成したスキルのGetメソッド
     public Skill GetGeneratedSkill_Item1()
     {
-        return generatedSkills.Item1;
+        return game.generatedSkillInGeneratePhase.Item1;
     }
     public Skill GetGeneratedSkill_Item2()
     {
-        return generatedSkills.Item2;
+        return game.generatedSkillInGeneratePhase.Item2;
     }
 
     //
@@ -294,11 +314,12 @@ public class TrainingBattle : MonoBehaviour
         // Generateフェーズの時
         if (game.currentPhase == Game.GamePhase.Generate)
         {
-            generatedSkills.Item1 = battler.GetGeneratedSkill();
-            generatedSkills.Item2 = cpu.GetGeneratedSkill();
-            if (generatedSkills.Item1 != null && generatedSkills.Item2 != null)
-            {
-                Debug.Log($"generatedSkills: {generatedSkills.Item1.skillName}, {generatedSkills.Item2.skillName}");
+            game.generatedSkillInGeneratePhase.Item1 = battler.GetGeneratedSkill();
+            game.generatedSkillInGeneratePhase.Item2 = cpu.GetGeneratedSkill();
+
+            if (game.generatedSkillInGeneratePhase.Item1 != null && game.generatedSkillInGeneratePhase.Item2 != null)
+                {
+                Debug.Log($"generated skill: {game.generatedSkillInGeneratePhase.Item1}, {game.generatedSkillInGeneratePhase.Item2}");
                 // 各flagを更新
                 isGenerating = false;
                 isGenerated = true;

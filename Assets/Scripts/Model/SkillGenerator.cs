@@ -98,7 +98,7 @@ public class SkillGenerator : MonoBehaviour
             {
                 param = JsonUtility.FromJson<SkillParams>(matchedText);
             }
-            // if parse is failed ... -> random rule based method
+            // if parse is failed ... rule base
             catch (System.Exception e)
             {
                 Debug.Log("failed to parse in json");

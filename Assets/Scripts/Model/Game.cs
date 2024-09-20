@@ -19,6 +19,9 @@ public class Game : MonoBehaviour
     // ゲームで生成したSkillを保持するリスト
     public List<Skill> generatedSkills = new List<Skill>();
 
+    // Generateフェーズで生成されたスキル | (battler, cpu)
+    public (Skill, Skill) generatedSkillInGeneratePhase = (null, null);
+
     
     public bool isFinished = false; // ゲーム終了かどうかの判断
     public int turn = 0; // ターン
@@ -32,6 +35,7 @@ public class Game : MonoBehaviour
     public void InitGame(int maxTurn)
     {
         generatedSkills.Clear();
+        generatedSkillInGeneratePhase = (null, null);
         isFinished = false;
         turn = 0;
         this.maxTurn = maxTurn;

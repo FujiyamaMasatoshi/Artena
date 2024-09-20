@@ -9,9 +9,10 @@ public class Battler : MonoBehaviour
     [SerializeField] private TMP_InputField inputField = null;
     [SerializeField] protected SkillGenerator skillGenerator = null;
     [SerializeField] private UI_EffectGenerator effectGenerator = null;
+    [SerializeField] private DamageEffectGenerator damageEffectGenerator = null;
 
     // status
-    public string playerName = "Max";
+    public string playerName;
     public int maxHp = 1000;
     public int hp = 1000;
 
@@ -22,6 +23,8 @@ public class Battler : MonoBehaviour
 
     public void InitBattler(int initHp)
     {
+        playerName = PlayerDataManager.instance.playerName;
+
         maxHp = initHp;
         hp = maxHp;
         isGenerating = false;
@@ -85,6 +88,17 @@ public class Battler : MonoBehaviour
         return effectGenerator.isEffecting;
     }
 
+
+    // ダメージエフェクトを生成
+    public void DisplayDamageEffect(int damage)
+    {
+        damageEffectGenerator.DisplayDamage(damage);
+    }
+    // ダメージエフェクトをDestroyする
+    public void ClearDamageEffect()
+    {
+        damageEffectGenerator.ClearDamageEffect();
+    }
 
 }
 

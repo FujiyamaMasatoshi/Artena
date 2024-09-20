@@ -105,7 +105,7 @@ public class OutGameEvent : MonoBehaviour
     {
         // メインシーンに戻る
         Debug.Log("back to main scene");
-        SceneManager.LoadScene("Main");
+        SceneManager.LoadScene("MainMenu");
     }
 
 
