@@ -67,6 +67,8 @@ public class TrainingBattle : MonoBehaviour
         // battlerとcpuのhpを初期化する
         battler.InitBattler(initHP);
         cpu.InitBattler(initHP);
+        // cpuのみ名前を変更
+        cpu.playerName = "試練の番人";
     }
 
 

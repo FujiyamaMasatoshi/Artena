@@ -1127,6 +1127,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageEffect: {fileID: 5970963664031557319}
   generatedPos: {fileID: 1391552027496684549}
+  maxScale: 3
+  scaleUpRate: 1.2
 --- !u!1 &4525338503889026205
 GameObject:
   m_ObjectHideFlags: 0
@@ -2849,11 +2851,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1964262113193627687, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -355
+      value: -418
       objectReference: {fileID: 0}
     - target: {fileID: 1964262113193627687, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 265
+      value: 106
       objectReference: {fileID: 0}
     - target: {fileID: 2725562645500141208, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_RenderMode
@@ -2862,6 +2864,10 @@ PrefabInstance:
     - target: {fileID: 2958846151255846032, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_Name
       value: DamageEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958846151255846032, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3187540440486204363, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_Pivot.x

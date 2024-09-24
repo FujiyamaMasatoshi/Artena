@@ -56,3 +56,20 @@ public class Skill
 
 
 }
+
+// スキルライブラリ
+[System.Serializable]
+public class SkillLibrary
+{
+    public List<Skill> library;
+    public Skill[] fewShot;
+
+    public SkillLibrary()
+    {
+        this.library = new List<Skill>();
+        this.fewShot = new Skill[3];
+    }
+
+
+
+}

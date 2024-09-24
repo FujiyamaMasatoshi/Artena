@@ -2543,6 +2543,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageEffect: {fileID: 8163926996244159597}
   generatedPos: {fileID: 2752814298548929452}
+  maxScale: 3
+  scaleUpRate: 1.2
 --- !u!1 &8342776082511351286
 GameObject:
   m_ObjectHideFlags: 0
@@ -2893,11 +2895,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1964262113193627687, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 454
+      value: 529
       objectReference: {fileID: 0}
     - target: {fileID: 1964262113193627687, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 78
+      value: -9
       objectReference: {fileID: 0}
     - target: {fileID: 2049347726882487911, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_fontSize
@@ -2910,6 +2912,10 @@ PrefabInstance:
     - target: {fileID: 2958846151255846032, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_Name
       value: DamageEffect
+      objectReference: {fileID: 0}
+    - target: {fileID: 2958846151255846032, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4438492945739920126, guid: a55c56d2efc5d454ca1475ce3a9d8d86, type: 3}
       propertyPath: m_LocalPosition.x

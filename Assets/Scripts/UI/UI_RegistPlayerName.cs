@@ -14,6 +14,8 @@ public class UI_RegistPlayerName : MonoBehaviour
     {
         registPlayerNameCanvas.SetActive(true);
         popUpMessage.gameObject.SetActive(false);
+
+
     }
 
     // プレイヤー名を登録
@@ -29,6 +31,10 @@ public class UI_RegistPlayerName : MonoBehaviour
         {
             // プレイヤー名を設定
             PlayerDataManager.instance.SavePlayerName(playerName);
+
+            // 初期fewShotの設定
+            PlayerDataManager.instance.InitSkillLibrary();
+
             // プレイヤーデータをロード
             PlayerDataManager.instance.LoadPlayerData();
             StartCoroutine(DisplayPlayerName());

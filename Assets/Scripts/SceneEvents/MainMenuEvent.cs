@@ -15,12 +15,39 @@ public class MainMenuEvent : MonoBehaviour
     [SerializeField] private MainMenuCameraController cameraController = null;
     [SerializeField] private float cameraSpeed = 5.0f;
 
+    [SerializeField] private GameObject GoTitlePanel;
+
     private string nextScene = "";
     private bool isGoNextScene = false;
 
     private void Start()
     {
         InitCameraPoint();
+        nextScene = "";
+        isGoNextScene = false;
+
+        GoTitlePanel.SetActive(false);
+    }
+
+    // タイトル遷移確認画面を表示
+    public void OpenGoTitlePanel()
+    {
+        GoTitlePanel.SetActive(true);
+
+
+    }
+
+    // タイトル画面に遷移
+    public void GoTitleScene()
+    {
+        CloseGoTitlePanel();
+        SceneManager.LoadScene("Title");
+    }
+
+    // タイトル遷移確認画面を閉じる
+    public void CloseGoTitlePanel()
+    {
+        GoTitlePanel.SetActive(false);
     }
 
     public void InitCameraPoint()
@@ -31,12 +58,14 @@ public class MainMenuEvent : MonoBehaviour
     // カメラを初期位置に戻す
     public void SwitchInitPoint()
     {
+        CloseGoTitlePanel();
         StartCoroutine(cameraController.MoveCameraToTransform(initPoint));
     }
 
     // OnlineBattle
     public void SwitchOnlineBattle()
     {
+        CloseGoTitlePanel();
         StartCoroutine(cameraController.MoveCameraToTransform(onlineBattlePoint));
         
     }
@@ -44,6 +73,7 @@ public class MainMenuEvent : MonoBehaviour
     // VS Cpu
     public void SwitchTrainingBattle()
     {
+        CloseGoTitlePanel();
         StartCoroutine(cameraController.MoveCameraToTransform(cpuBattlePoint));
         isGoNextScene = true;
         nextScene = "Training";
@@ -53,13 +83,19 @@ public class MainMenuEvent : MonoBehaviour
     // 実験場
     public void SwitchExperimentMode()
     {
+        CloseGoTitlePanel();
         StartCoroutine(cameraController.MoveCameraToTransform(experimentPoint));
+        isGoNextScene = true;
+        nextScene = "Experiment";
     }
 
     // スキル図鑑
     public void SwitchLibraryMode()
     {
+        CloseGoTitlePanel();
         StartCoroutine(cameraController.MoveCameraToTransform(libraryPoint));
+        isGoNextScene = true;
+        nextScene = "Library";
     }
 
 
@@ -67,6 +103,7 @@ public class MainMenuEvent : MonoBehaviour
     {
         if (isGoNextScene && !cameraController.isMovingCamera)
         {
+            isGoNextScene = false;
             SceneManager.LoadScene(nextScene);
         }
     }

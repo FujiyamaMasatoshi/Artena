@@ -21,11 +21,16 @@ public class UI_Expt_DisplaySkill : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coolPoint = null;
     [SerializeField] private TextMeshProUGUI uniquePoint = null;
 
-    private Skill displayedSkill = null;
+    private Skill generatedSkill = null;
 
+    // generatedSkillにskillをセット
+    public void SetGeneratedSkill(Skill skill)
+    {
+        generatedSkill = skill;
+    }
 
     // スキルを受け取り、スキルパラメータをUIに反映
-    private void ReflectSkillParameter(Skill skill)
+    public void ReflectSkillParameter(Skill skill)
     {
         // スキル名
         skillName.text = skill.skillName;
@@ -48,10 +53,9 @@ public class UI_Expt_DisplaySkill : MonoBehaviour
 
     private void Update()
     {
-        displayedSkill = exptEvent.GetGeneratedSkill();
-        if (displayedSkill != null)
+        if (generatedSkill != null)
         {
-            ReflectSkillParameter(displayedSkill);
+            ReflectSkillParameter(generatedSkill);
         }
     }
 

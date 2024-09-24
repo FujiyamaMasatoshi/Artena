@@ -66,18 +66,74 @@ public class UI_EffectGenerator : MonoBehaviour
         }
 
         // 移動したらDestroyEffectsを呼び出す
-        DestroyEffects();
+        float scale = 5.0f;
+        float effectingTime = 2.0f;
+        StartCoroutine(DestroyEffects(scale, effectingTime));
 
         isEffecting = false;
     }
 
-    public void DestroyEffects()
+    public IEnumerator DestroyEffects(float scale, float effectingTime)
     {
         if (instEf != null && isInstantiate)
         {
+            float timer = 0.0f;
+
+            while (timer < effectingTime)
+            {
+                timer += Time.deltaTime;
+
+                // 0.2秒で3倍にして、0.8秒で0.1倍にする
+                Vector3 defaultScale = instEf.transform.localScale;
+                Vector3 minScale = new Vector3(0.1f, 0.1f, 0.1f);
+                Vector3 maxScale = new Vector3(scale, scale, scale);
+                if (timer < effectingTime*0.2f)
+                {
+                    instEf.transform.localScale = Vector3.Lerp(defaultScale, maxScale, timer / 0.2f);
+                }
+                else
+                {
+                    instEf.transform.localScale = Vector3.Lerp(maxScale, minScale, (timer - 0.2f) / 0.8f);
+                }
+                yield return null;
+
+            }
             Destroy(instEf);
             isInstantiate = false;
         }
 
     }
+
+    /*
+    public void DestroyEffects()
+    {
+        if (instEf != null && isInstantiate)
+        {
+            float effectingTime = 1.0f;
+            float timer = 0.0f;
+
+            while (timer < effectingTime)
+            {
+                timer += Time.deltaTime;
+
+                // 0.2秒で3倍にして、0.8秒で0.1倍にする
+                Vector3 defaultScale = instEf.transform.localScale;
+                Vector3 maxScale = new Vector3(3f, 3f, 3f);
+                Vector3 minScale = new Vector3(0.1f, 0.1f, 0.1f);
+                if (timer < 0.2f)
+                {
+                    instEf.transform.localScale = Vector3.Lerp(defaultScale, maxScale, timer/0.2f);
+                }
+                else
+                {
+                    instEf.transform.localScale = Vector3.Lerp(maxScale, minScale, (timer - 0.2f) / 0.8f);
+                }
+                
+            }
+            Destroy(instEf);
+            isInstantiate = false;
+        }
+
+    }
+    */
 }

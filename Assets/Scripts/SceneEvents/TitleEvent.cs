@@ -6,12 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class TitleEvent : MonoBehaviour
 {
-    [SerializeField] private GameObject newGameCanvas = null;
+    [SerializeField] private GameObject confirmPanel = null;
     [SerializeField] private Button continueButton = null;
+
+    [SerializeField] private GameObject clearDataPanel = null;
 
     private void Start()
     {
-        newGameCanvas.SetActive(false);
+        confirmPanel.SetActive(false);
+        clearDataPanel.SetActive(false);
 
         // continueできるかチェックする
         CheckCanContinue();
@@ -20,6 +23,8 @@ public class TitleEvent : MonoBehaviour
 
     private void CheckCanContinue()
     {
+        PlayerDataManager.instance.LoadPlayerData();
+
         string playerName = PlayerPrefs.GetString("PlayerName");
 
         // playerNameが存在しない場合
@@ -31,6 +36,26 @@ public class TitleEvent : MonoBehaviour
         {
             continueButton.interactable = true;
         }
+    }
+
+    // settingボタンを押したら呼び出す
+    public void OpenClearDataPanel()
+    {
+        clearDataPanel.SetActive(true);
+    }
+
+    public void ClearPlayerData()
+    {   
+        PlayerDataManager.instance.DeletePlayerData();
+        CheckCanContinue();
+
+        // パネルを閉じる
+        CloseClearDataPanel();
+    }
+
+    public void CloseClearDataPanel()
+    {
+        clearDataPanel.SetActive(false);
     }
 
     // Continueボタンを押したら呼び出す
@@ -52,7 +77,7 @@ public class TitleEvent : MonoBehaviour
         }
         else
         {
-            newGameCanvas.SetActive(true);
+            confirmPanel.SetActive(true);
         }
         
     }
@@ -60,7 +85,7 @@ public class TitleEvent : MonoBehaviour
     // キャンバスを非表示にする
     public void UndisplayCanvas()
     {
-        newGameCanvas.SetActive(false);
+        confirmPanel.SetActive(false);
     }
 
     // NewGameシーンへ移動
