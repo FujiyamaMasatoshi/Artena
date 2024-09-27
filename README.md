@@ -50,6 +50,6 @@ https://youtu.be/I5KTwviAado
 
 ## 実行ファイル
 以下のURLからMacOS版とWindowsOS版をダウンロードすることができます。
-ダウンロードしてうまく起動できない場合は`SpellMe実行ファイルについて.pdf`を参照してください。
+ダウンロードしてうまく起動できない場合は`Artena実行ファイルについて.pdf`を参照してください。
 https://drive.google.com/drive/folders/14F7SCx6YtF4YProhgeOBANY0SIQtWpw6?usp=sharing
 
