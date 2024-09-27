@@ -45,6 +45,7 @@ CPUとの対戦が行えます。
 
 
 ## プレイ動画
+ゲームプレイ映像は以下のURLから確認できます。
 https://youtu.be/I5KTwviAado
 
 
