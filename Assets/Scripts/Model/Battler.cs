@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class Battler : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class Battler : MonoBehaviour
     public string playerName;
     public int maxHp = 1000;
     public int hp = 1000;
+    public string attribute;
 
     // スキル生成中かどうかを判断するflag
     public bool isGenerating = false; // スキル生成中
@@ -23,12 +25,24 @@ public class Battler : MonoBehaviour
 
     public void InitBattler(int initHp)
     {
-        playerName = PlayerDataManager.instance.playerName;
+        PlayerDataManager.instance.LoadPlayerData();
+        try
+        {
+            playerName = PlayerDataManager.instance.playerName;
+        }
+        catch(NullReferenceException e)
+        {
+            playerName = "unknown";
+        }
+
 
         maxHp = initHp;
         hp = maxHp;
         isGenerating = false;
         isExecute = false;
+
+        // 属性の指定
+        attribute = PlayerDataManager.instance.attribute;
 
         // ここでLLMをロードする
         skillGenerator.InitSkillGenerator();
@@ -98,6 +112,17 @@ public class Battler : MonoBehaviour
     public void ClearDamageEffect()
     {
         damageEffectGenerator.ClearDamageEffect();
+    }
+
+
+    // 属性をランダムで決定
+    public void SetRandomAttribute()
+    {
+
+        string[] attributes = { "cute", "cool", "unique" };
+
+        int index = UnityEngine.Random.Range(0, 3);
+        this.attribute = attributes[index];
     }
 
 }

@@ -7,6 +7,7 @@ public class PlayerDataManager : MonoBehaviour
 {
     public static PlayerDataManager instance = null;
     public string playerName = "";
+    public string attribute = "";
     public SkillLibrary skillLibrary = null;
     
     //public List<Skill> skillLibrary = new List<Skill>();
@@ -30,6 +31,9 @@ public class PlayerDataManager : MonoBehaviour
     {
         // プレイヤー名設定
         playerName = PlayerPrefs.GetString("PlayerName");
+
+        // プレイヤーの属性
+        attribute = PlayerPrefs.GetString("Attribute");
 
         // SkillLibraryからデータをロード
         LoadSkillLibrary();
@@ -141,6 +145,29 @@ public class PlayerDataManager : MonoBehaviour
         PlayerPrefs.SetString("SkillLibrary", json);
         PlayerPrefs.Save();
 
+    }
+
+    public void InitAttribute()
+    {
+        string[] attributes = { "cute", "cool", "unique"};
+
+        int index = Random.Range(0, 3);
+        this.attribute = attributes[index];
+
+        // 保存
+        SaveAttribute();
+        //PlayerPrefs.SetString("Attribute", this.attribute);
+        //PlayerPrefs.Save();
+    }
+
+    public void SaveAttribute()
+    {
+        if (this.attribute == "cute" || this.attribute == "cool" || this.attribute == "unique")
+        {
+            // 保存
+            PlayerPrefs.SetString("Attribute", this.attribute);
+            PlayerPrefs.Save();
+        }
     }
 
     public void SetFewShotSkill(Skill skill)

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class TrainingBattle : MonoBehaviour
@@ -16,7 +17,21 @@ public class TrainingBattle : MonoBehaviour
     [SerializeField] private OutGameEvent outGameEvent = null;
     [SerializeField] private GameObject mainCamera = null;
     [SerializeField] private Transform defaultCameraTransform = null;
-    
+
+    // GameStartフェーズでの演出パネル
+    [SerializeField] private Image gameStartPanel;
+    [SerializeField] private UI_TB_TurnStartPanel turnStartPanel;
+    private bool isGameStartPhaseFinished = false;
+    private bool isTurnStartPanelFinished = false;
+
+    // battlerの属性を表すアイコン
+    [SerializeField] private UI_TB_AttributeIcon battlerIcon;
+    [SerializeField] private UI_TB_AttributeIcon cpuIcon;
+
+    // bgm
+    [SerializeField] BattleBgmManager battleBgmManager;
+
+    // inputField
     [SerializeField] private TMP_InputField inputField = null; // battler用のinputField
 
     public bool isGenerated = false; // スキルが生成し終わったか -- 実行して良いかどうか
@@ -39,6 +54,9 @@ public class TrainingBattle : MonoBehaviour
         InitTrainingBattle(); // game init is in this method   
 
         StartCoroutine(Battle());
+
+        // bgmのリセット
+        battleBgmManager.InitSetBGM();
     }
 
 
@@ -56,7 +74,7 @@ public class TrainingBattle : MonoBehaviour
         isExecuted = false;
 
         // InGameCanvasをactive true, OutGameCanvasをactive falseにする
-        InGameCanvas.SetActive(true);
+        InGameCanvas.SetActive(false);
         OutGameCanvas.SetActive(false);
 
         // カメラをデフォルトの位置に移動させる
@@ -67,8 +85,20 @@ public class TrainingBattle : MonoBehaviour
         // battlerとcpuのhpを初期化する
         battler.InitBattler(initHP);
         cpu.InitBattler(initHP);
-        // cpuのみ名前を変更
+        // cpuのみ名前と属性を設定し直す
         cpu.playerName = "試練の番人";
+        cpu.SetRandomAttribute();
+        // 属性iconの設定
+        battlerIcon.SetIcon();
+        cpuIcon.SetIconForCPU(cpu);
+        
+
+        // ゲームフェーズの演出関連
+        //gameStartPanel.SetActive(false);
+        gameStartPanel.gameObject.SetActive(false);
+        turnStartPanel.gameObject.SetActive(false);
+        isGameStartPhaseFinished = false;
+        isTurnStartPanelFinished = false;
     }
 
 
@@ -82,7 +112,8 @@ public class TrainingBattle : MonoBehaviour
                 // GameStartフェーズ
                 case Game.GamePhase.GameStart:
                     GameStart();
-                    yield return new WaitUntil(() => isMouseButtonDown);
+                    yield return new WaitUntil(() => isGameStartPhaseFinished);
+                    isGameStartPhaseFinished = false;
                     isMouseButtonDown = false;
                     game.currentPhase = Game.GamePhase.TurnStart; //状態遷移
                     break;
@@ -90,7 +121,8 @@ public class TrainingBattle : MonoBehaviour
                 // TurnStartフェーズ
                 case Game.GamePhase.TurnStart:
                     TurnStart();
-                    yield return new WaitUntil(() => isMouseButtonDown);
+                    yield return new WaitUntil(() => isTurnStartPanelFinished);
+                    isTurnStartPanelFinished = false;
                     isMouseButtonDown = false;
                     game.currentPhase = Game.GamePhase.Generate; //状態遷移
                     break;
@@ -141,9 +173,52 @@ public class TrainingBattle : MonoBehaviour
     // ** 各GamePhaseメソッド ***********************************************
     private void GameStart()
     {
+        StartCoroutine(GameStartEvent());
+    }
+    private IEnumerator GameStartEvent()
+    {
         Debug.Log("GameStart");
         ClearGeneratedSkills();
         inputField.text = "";
+
+        gameStartPanel.gameObject.SetActive(true);
+        gameStartPanel.fillAmount = 0f;
+        InGameCanvas.SetActive(true);
+
+        //// scaleを0.1倍にして0.5秒かけて1倍に戻す
+        float timer = 0f;
+        float expectTime = 0.3f;
+
+
+        while(timer < expectTime)
+        {
+            timer += Time.deltaTime;
+
+            gameStartPanel.fillAmount = timer / expectTime;
+
+            yield return null;
+        }
+
+        // 1秒待って
+        yield return new WaitForSeconds(1.0f);
+
+        // 0.3秒かけて0.1倍にscaleダウン
+        timer = 0.0f;
+        expectTime = 0.2f;
+
+        gameStartPanel.fillOrigin = 1; // left -> right
+        while (timer < expectTime)
+        {
+            timer += Time.deltaTime;
+
+            gameStartPanel.fillAmount = 1 - timer / expectTime;
+
+            yield return null;
+        }
+
+        // パネルを消す
+        gameStartPanel.gameObject.SetActive(false);
+        isGameStartPhaseFinished = true;
     }
 
     private void TurnStart()
@@ -153,6 +228,38 @@ public class TrainingBattle : MonoBehaviour
         ClearGeneratedSkills(); // {game, battler, cpu}インスタンスのgeneratedSkillをクリア
         inputField.text = ""; // inputFieldをクリア
 
+        StartCoroutine(TurnStartEvent());
+
+    }
+
+    private IEnumerator TurnStartEvent()
+    {
+        isTurnStartPanelFinished = false;
+        turnStartPanel.gameObject.SetActive(true);
+        turnStartPanel.SetTurn(game.turn);
+
+        turnStartPanel.transform.localScale = new Vector3(0.1f, 0.1f, 1f);
+        float timer = 0f;
+        float expectTime = 0.3f;
+        while (timer < expectTime)
+        {
+            timer += Time.deltaTime;
+            turnStartPanel.transform.localScale = Vector3.Lerp(new Vector3(0.1f, 0.1f, 1f), new Vector3(1f, 1f, 1f), timer / expectTime);
+            yield return null;
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        timer = 0.0f;
+        expectTime = 0.2f;
+        while (timer < expectTime)
+        {
+            timer += Time.deltaTime;
+            turnStartPanel.transform.localScale = Vector3.Lerp(new Vector3(1f, 1f, 1f), new Vector3(0.1f, 0.1f, 1f), timer / expectTime);
+            yield return null;
+        }
+        turnStartPanel.gameObject.SetActive(false);
+        isTurnStartPanelFinished = true;
     }
 
     public void Generate()
@@ -224,8 +331,8 @@ public class TrainingBattle : MonoBehaviour
         // 2. 計算した結果から、それぞれのHPを更新
 
         // 1
-        var battlerSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item1);
-        var cpuSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item2);
+        var battlerSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item1, cpu);
+        var cpuSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item2, battler);
 
         TB_GameManager.instance.battlerSkillPoints += battlerSkillPoint;
         TB_GameManager.instance.cpuSkillPoints += cpuSkillPoint;
@@ -234,6 +341,9 @@ public class TrainingBattle : MonoBehaviour
         // battlerのダメージ生成
         Debug.Log($"cpuSkillPoint: {cpuSkillPoint}");
         Debug.Log($"battlerSkillPoint: {battlerSkillPoint}");
+
+        // skillPoint -> damage
+
         battler.DisplayDamageEffect(cpuSkillPoint);
         // cpuのダメージ生成
         cpu.DisplayDamageEffect(battlerSkillPoint);
@@ -265,6 +375,9 @@ public class TrainingBattle : MonoBehaviour
 
     private void GameEnd()
     {
+        // bgm setting
+        battleBgmManager.SetBGM_GameEnd();
+
         Debug.Log("GameEnd");
         game.isFinished = true;
     }

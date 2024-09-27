@@ -14,8 +14,10 @@ public class UI_EffectGenerator : MonoBehaviour
     [SerializeField] private float efSpeed = 5f;
     [SerializeField] private Vector3 maxScale = new Vector3(5f, 5f, 5f);
 
+    
     // エフェクト中かどうか
     public bool isEffecting = false;
+
     
     // スキル生成中にスキルを生成している風のエフェクトを呼び出す
     public void InstantiateEffects(Vector3 instPos)
@@ -104,36 +106,4 @@ public class UI_EffectGenerator : MonoBehaviour
 
     }
 
-    /*
-    public void DestroyEffects()
-    {
-        if (instEf != null && isInstantiate)
-        {
-            float effectingTime = 1.0f;
-            float timer = 0.0f;
-
-            while (timer < effectingTime)
-            {
-                timer += Time.deltaTime;
-
-                // 0.2秒で3倍にして、0.8秒で0.1倍にする
-                Vector3 defaultScale = instEf.transform.localScale;
-                Vector3 maxScale = new Vector3(3f, 3f, 3f);
-                Vector3 minScale = new Vector3(0.1f, 0.1f, 0.1f);
-                if (timer < 0.2f)
-                {
-                    instEf.transform.localScale = Vector3.Lerp(defaultScale, maxScale, timer/0.2f);
-                }
-                else
-                {
-                    instEf.transform.localScale = Vector3.Lerp(maxScale, minScale, (timer - 0.2f) / 0.8f);
-                }
-                
-            }
-            Destroy(instEf);
-            isInstantiate = false;
-        }
-
-    }
-    */
 }

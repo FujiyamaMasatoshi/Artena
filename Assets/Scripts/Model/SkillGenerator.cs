@@ -11,7 +11,7 @@ public class SkillGenerator : MonoBehaviour
 
 
     // prompts
-    [SerializeField] private string systemPrompt = "あなたは忠実なアシスタントです。あなたにはあなたは忠実なアシスタントです。あなたには、これからスキル名としてユーザーが考えた単語が与えられます。その単語を可愛いらしさ、かっこよさ、ユニークさの3つの視点から0から100の間で点数をつけてください。\n";
+    [SerializeField] private string systemPrompt = "あなたは忠実なアシスタントです。あなたにはあなたは忠実なアシスタントです。あなたには、これからスキル名としてユーザーが考えた単語が与えられます。そのスキル名を、可愛いらしさ(cute)、かっこよさ(cool)、ユニークさ(unique)の3つの視点から0から100の間で点数をつけてください。\n";
     private string fewshotPrompt = "";
     private string userPrompt = "";
     private string skillName = ""; //入力されたスキル名
@@ -54,12 +54,18 @@ public class SkillGenerator : MonoBehaviour
         return skillName;
     }
 
-
+    // PlayerDataManagerからfew shotを引っ張る
     public void SetFewShotPrompt()
     {
-        string ex1 = "(入力1)\n[雷鳴のレゾナンス]\n(出力1)\n{\"cute\": 20, \"cool\": 89, \"unique\": 35}\n";
-        string ex2 = "(入力2)\n[フローラル花嵐]\n(出力2)\n{\"cute\": 85, \"cool\": 17, \"unique\": 45}\n";
-        string ex3 = "(入力3)\n[幻影の茶碗スマッシュ]\n(出力3)\n{\"cute\": 15, \"cool\": 7, \"unique\": 95}\n";
+        // fewShotデータを呼び出す
+        PlayerDataManager.instance.LoadPlayerData();
+        Skill cuteSkill = PlayerDataManager.instance.skillLibrary.fewShot[0];
+        Skill coolSkill = PlayerDataManager.instance.skillLibrary.fewShot[1];
+        Skill uniqueSkill = PlayerDataManager.instance.skillLibrary.fewShot[2];
+
+        string ex1 = $"(入力1)\n[{cuteSkill.skillName}]\n(出力1)\n {{\"cute\": {cuteSkill.parameters.cute}, \"cool\": {cuteSkill.parameters.cool}, \"unique\": {cuteSkill.parameters.unique}}}\n";
+        string ex2 = $"(入力2)\n[{coolSkill.skillName}]\n(出力2)\n{{\"cute\": {coolSkill.parameters.cute}, \"cool\": {coolSkill.parameters.cool}, \"unique\": {coolSkill.parameters.unique}}}\n";
+        string ex3 = $"(入力3)\n[{uniqueSkill.skillName}]\n(出力3)\n {{\"cute\": {uniqueSkill.parameters.cute}, \"cool\": {uniqueSkill.parameters.cool}, \"unique\": {uniqueSkill.parameters.unique}}}\n";
         
         fewshotPrompt = ex1 + ex2 + ex3;
     }

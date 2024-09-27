@@ -10,11 +10,17 @@ public class TitleEvent : MonoBehaviour
     [SerializeField] private Button continueButton = null;
 
     [SerializeField] private GameObject clearDataPanel = null;
+    [SerializeField] private GameObject settingPanel;
+    [SerializeField] private GameObject creditPanel;
+    private bool isOpenSettingPanel = false;
 
     private void Start()
     {
         confirmPanel.SetActive(false);
         clearDataPanel.SetActive(false);
+        settingPanel.SetActive(false);
+        isOpenSettingPanel = false;
+        creditPanel.SetActive(false);
 
         // continueできるかチェックする
         CheckCanContinue();
@@ -39,9 +45,26 @@ public class TitleEvent : MonoBehaviour
     }
 
     // settingボタンを押したら呼び出す
+    public void OnClickedSettingIcon()
+    {
+        if (!isOpenSettingPanel)
+        {
+            settingPanel.SetActive(true);
+            isOpenSettingPanel = true;
+        }
+        else
+        {
+            settingPanel.SetActive(false);
+            isOpenSettingPanel = false;
+        }
+    }
+
+    // DeleteButtonを押したら
     public void OpenClearDataPanel()
     {
         clearDataPanel.SetActive(true);
+        settingPanel.SetActive(false);
+        isOpenSettingPanel = false;
     }
 
     public void ClearPlayerData()
@@ -92,5 +115,17 @@ public class TitleEvent : MonoBehaviour
     public void GoToNewGameScene()
     {
         SceneManager.LoadScene("NewGameScene");
+    }
+
+    // creditボタンを押したら
+    public void OpenCreditPanel()
+    {
+        creditPanel.SetActive(true);
+        settingPanel.SetActive(false);
+        isOpenSettingPanel = false;
+    }
+    public void CloseCreditPanel()
+    {
+        creditPanel.SetActive(false);
     }
 }

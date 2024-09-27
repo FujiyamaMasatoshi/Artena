@@ -115,12 +115,11 @@ public class Game : MonoBehaviour
     }
 
 
-    // 生成されたSkillからパフォーマンスポイントを計算する
-    // スキルの属性が連続して同じ場合、ポイントを加算していく
-    // このメソッドはAddSkillを呼び出した後に呼び出すこと
-    //  - continuousAttributeの更新ができていないため
-    public int ComputeSkillPoint(Skill skill)
+    // スキルポイントを計算
+    // Battler targetを取得し、その属性によって決める
+    public int ComputeSkillPoint(Skill skill, Battler target)
     {
+        // skill pointの計算
         int skillPoint = 0;
         // skillの属性は等倍、それ以外は0.5倍加算してポイントにする
         // continuousAttributeを考えて、属性の倍率計算する
@@ -134,8 +133,60 @@ public class Game : MonoBehaviour
 
         skillPoint = (int)(skillPoint * ratio); //int型にキャスト
 
-        return skillPoint;
+        // targetがいる時
+        if (target != null)
+        {
+            
+            // targetの属性によって0.75倍 or 1倍 or 1.5倍を選択
+            // cute < cool, cool < unique, unique < cute
+            string skillAtt = skill.Attribute();
+            string targetAtt = target.attribute;
+            if (string.Equals(skillAtt, targetAtt))
+            {
+
+                int damage;
+
+                Debug.Log("skill att equals battler att");
+                damage = skillPoint;
+
+                Debug.Log($"damage: {damage}");
+                return damage;
+            }
+            else
+            {
+
+                int damage = skillPoint;
+                // cute:
+                // targetの属性がskillの属性より強い時
+                if (skillAtt == "cute" && targetAtt == "cool") damage = (int)(skillPoint * 0.75f);
+                else if (skillAtt == "cute" && targetAtt == "unique") damage = (int)(skillPoint * 1.5f);
+
+                // cool;
+                // targetの属性の方がskillの属性より強い時
+                if (skillAtt == "cool" && targetAtt == "unique") damage = (int)(skillPoint * 0.75f);
+                else if(skillAtt == "cool" && targetAtt == "unique") damage = (int)(skillPoint * 1.5f);
+
+                // unique:
+                // targetの属性の方がskillの属性より強い時
+                if (skillAtt == "unique" && targetAtt == "cute") damage = (int)(skillPoint * 0.75f);
+                else if (skillAtt == "unique" && targetAtt == "cute") damage = (int)(skillPoint * 1.5f);
+
+                if (skillPoint == damage) Debug.Log("skill point = damage. this is illegal");
+
+                return damage;
+
+            }
+            
+        
+        }
+        // targetがnullの時、skillPointのみ返す
+        else
+        {
+            Debug.Log("non target");
+            return skillPoint;
+        }
     }
+
 
 
     // 生成したスキルを表示させる
@@ -146,7 +197,7 @@ public class Game : MonoBehaviour
         text += $"cool: {skill.parameters.cool}\n";
         text += $"unique: {skill.parameters.unique}\n";
         text += $"att: {skill.Attribute()}\n";
-        text += $"skillPoint: {ComputeSkillPoint(skill)}";
+        text += $"skillPoint: {ComputeSkillPoint(skill, null)}";
         return text;
     }
 

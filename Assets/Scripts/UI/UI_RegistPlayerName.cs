@@ -35,8 +35,13 @@ public class UI_RegistPlayerName : MonoBehaviour
             // 初期fewShotの設定
             PlayerDataManager.instance.InitSkillLibrary();
 
+            // 属性のランダムで設定
+            PlayerDataManager.instance.InitAttribute();
+
             // プレイヤーデータをロード
             PlayerDataManager.instance.LoadPlayerData();
+
+
             StartCoroutine(DisplayPlayerName());
 
             
