@@ -46,11 +46,13 @@ CPUとの対戦が行えます。
 
 ## プレイ動画
 ゲームプレイ映像は以下のURLから確認できます。
+
 https://youtu.be/I5KTwviAado
 
 
 ## 実行ファイル
 以下のURLからMacOS版とWindowsOS版をダウンロードすることができます。
 ダウンロードしてうまく起動できない場合は`Artena実行ファイルについて.pdf`を参照してください。
+
 https://drive.google.com/drive/folders/14F7SCx6YtF4YProhgeOBANY0SIQtWpw6?usp=sharing
 
