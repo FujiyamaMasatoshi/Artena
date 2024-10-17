@@ -35,12 +35,14 @@ public class Skill
 {
     public string skillName;
     public SkillParams parameters;
-    
+    public string skillDetails;
 
-    public Skill(string skillName, SkillParams parameters)
+
+    public Skill(string skillName, SkillParams parameters, string skillDetails="")
     {
         this.skillName = skillName;
         this.parameters = parameters;
+        this.skillDetails = skillDetails;
         parameters.NormalizeParams();
     }
 

@@ -18,6 +18,9 @@ public class UI_Lib_SkillDetailPanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coolPoint = null;
     [SerializeField] private TextMeshProUGUI uniquePoint = null;
 
+    // skillDetails
+    [SerializeField] private TextMeshProUGUI skillDetails = null;
+
     //private void Start()
     //{
     //    Init();
@@ -54,6 +57,8 @@ public class UI_Lib_SkillDetailPanel : MonoBehaviour
             cutePoint.text = skill.parameters.cute.ToString();
             coolPoint.text = skill.parameters.cool.ToString();
             uniquePoint.text = skill.parameters.unique.ToString();
+
+            skillDetails.text = skill.skillDetails;
         }
     }
 

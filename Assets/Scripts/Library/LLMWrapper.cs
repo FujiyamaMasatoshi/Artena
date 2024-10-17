@@ -58,7 +58,7 @@ public class LLMWrapper : MonoBehaviour
         Debug.Log("modelPath: " + modelPath);
         try
         {
-            llm = new Llama(modelPath);
+            llm = new Llama(modelPath, nCtx: 512);
             isSuccessed = true;
         }
         catch(ArgumentException e)

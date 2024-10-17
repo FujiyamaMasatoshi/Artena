@@ -20,6 +20,7 @@ public class UI_Expt_DisplaySkill : MonoBehaviour
     [SerializeField] private TextMeshProUGUI cutePoint = null;
     [SerializeField] private TextMeshProUGUI coolPoint = null;
     [SerializeField] private TextMeshProUGUI uniquePoint = null;
+    [SerializeField] private TextMeshProUGUI skillDetails = null;
 
     private Skill generatedSkill = null;
 
@@ -49,6 +50,8 @@ public class UI_Expt_DisplaySkill : MonoBehaviour
         cutePoint.text = skill.parameters.cute.ToString();
         coolPoint.text = skill.parameters.cool.ToString();
         uniquePoint.text = skill.parameters.unique.ToString();
+
+        skillDetails.text = skill.skillDetails;
     }
 
     private void Update()

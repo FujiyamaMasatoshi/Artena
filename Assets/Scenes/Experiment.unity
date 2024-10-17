@@ -2788,6 +2788,7 @@ MonoBehaviour:
       cute: 0
       cool: 0
       unique: 0
+    skillDetails: 
   confirmPanel: {fileID: 7670080684285549996}
 --- !u!4 &1608322455
 Transform:
