@@ -31,6 +31,7 @@ public class LLMWrapper : MonoBehaviour
 
     private Llama llm = null;
     //private string modelPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Model/Llama-3-ELYZA-JP-8B-Q3_K_L.gguf");
+    //private string modelPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Model/gemma-2-2B-jpn-it-Q4_K_M.gguf");
     private string modelPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Model/stabilityai-japanese-stablelm-3b-4e1t-instruct-Q4_0.gguf");
     //private string modelPath = System.IO.Path.Combine(Application.streamingAssetsPath, "Model/alpaca-guanaco-japanese-gpt-1b.Q8_0.gguf");
 

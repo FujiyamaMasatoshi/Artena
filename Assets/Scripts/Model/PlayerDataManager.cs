@@ -122,9 +122,9 @@ public class PlayerDataManager : MonoBehaviour
         LoadSkillLibrary();
 
         // 初期化するためのスキルはこちらで用意する
-        Skill cuteSkill = new Skill("キャピギャルアピール", new SkillParams(65, 10, 10), "一般的だと思われるギャルによるアピール行動。ギャルのアピールほど目に余るものはないが、一周回って可愛くて仕方ないギャルのアピールには心を打たれる。");
-        Skill coolSkill = new Skill("氷刃絶影", new SkillParams(11, 84, 5), "どこからRPGで使用されそうなスキルである。氷の刃によって影を絶つほどの剣技にはきっとメロメロにされてしまうだろう。");
-        Skill uniqueSkill = new Skill("ミラージュ乱舞", new SkillParams(12, 14, 74), "この技はGenerativeAIによってユニークだと思われたスキルだ。最近の生成AIによる発達は我々の予想斜め上をいくユニークさを体現しているといえよう。");
+        Skill cuteSkill = new Skill("キャピギャルアピール", new SkillParams(65, 10, 10), "ギャルのアピールは、一周回って可愛くて仕方ないギャルのアピールには心を打たれる。");
+        Skill coolSkill = new Skill("氷刃絶影", new SkillParams(11, 84, 5), "氷の刃によって影を絶つほどの剣技にはきっとメロメロにされてしまうだろう。");
+        Skill uniqueSkill = new Skill("ミラージュ乱舞", new SkillParams(12, 14, 74), "ミラージュ曲線を体現したユニークなスキルだ。");
 
         // libraryにセット
         skillLibrary.fewShot[0] = cuteSkill;

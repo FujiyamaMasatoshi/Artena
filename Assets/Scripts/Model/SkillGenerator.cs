@@ -74,7 +74,7 @@ public class SkillGenerator : MonoBehaviour
     // スキルの詳細ストーリーを生成させるためのプロンプト
     public void CreatePromptForSkillDetails(string skillName)
     {
-        string sys = $"\nこれから与えられる[スキル名]から、そのスキルに関するストーリーを2~3文で出力しなさい。\n";
+        string sys = $"\nこれから与えられる[スキル名]から、そのスキルに関するストーリーを1文で出力しなさい。\n";
         Skill skill0 = PlayerDataManager.instance.skillLibrary.fewShot[0];
         Skill skill1 = PlayerDataManager.instance.skillLibrary.fewShot[1];
         Skill skill2 = PlayerDataManager.instance.skillLibrary.fewShot[2];
@@ -141,28 +141,9 @@ public class SkillGenerator : MonoBehaviour
         }
     }
 
-    private string ExtractSkillDetails(string skillDetails, string pattern = "[/story]"/*@"\[(.*?)\]"*/)
+    private string ExtractSkillDetails(string skillDetails, string pattern = "[/story]")
     {
-        //// patternに従って文字列を抽出
-        //MatchCollection matches = Regex.Matches(skillDetails, pattern);
-
-        //if (matches.Count <= 0)
-        //{
-        //    // から文字列を返す -> もう一度推論させる合図
-        //    return null;
-        //}
-        //else
-        //{
-        //    // 最初に一致したもの
-        //    string matchedText = matches[0].Value;
-
-        //    //改行コードを削除
-        //    matchedText = matchedText.Replace("\n", "");
-        //    //Debug.Log($"matched text: {matchedText}");
-
-        //    return matchedText;
-        //}
-
+        
         int index = skillDetails.IndexOf(pattern);
 
         if (index != -1) // [/story]が見つかった場合
@@ -254,7 +235,7 @@ public class SkillGenerator : MonoBehaviour
         // *****************************
         // 1. ランダムなスキル名を生成
         // *****************************
-        // システムプロンプト
+        // system prompt
         var sysPrmpt = "あなたは忠実なアシスタントです。これからcute,cool,uniqueの中から1つお題を与えるので、それにあったオリジナル必殺技を10文字以内で考えてください。\n";
         // fewshot
         var fewshot = "(入力1)\n[cute]\n(出力1)\n{フラッフィー・ハートブレイク}\n";
@@ -264,14 +245,14 @@ public class SkillGenerator : MonoBehaviour
         string[] attributes = { "cute", "cool", "unique" };
         var input = $"(入力4)\n[{attributes[Random.Range(0, attributes.Length)]}]\n(出力4)\n";
 
-        // userプロンプト
+        // user prompt
         var usrPrmpt = sysPrmpt + fewshot + input;
 
         isGenerating = true; // 推論開始
 
         var skillNameLlmOut = await Task.Run(() => llm.Run(usrPrmpt, 16, temperature));
 
-        //isGenerating = false; // 終了
+        isGenerating = false; // 終了
 
         generatedRandomSkillName = ExtractSkillName(skillNameLlmOut);
 
@@ -286,18 +267,6 @@ public class SkillGenerator : MonoBehaviour
             // ****************************
             // 2. Skillを生成
             // ****************************
-            //generatedSkill = null; // 前回生成したスキルをリセット
-
-            ////isGenerating = true; // 推論開始
-            //SetFewShotPrompt();
-            //CreatePromptForSkillParameter(this.generatedRandomSkillName); //ランダム生成したスキル名を使用
-            //var skillLlmOut = await Task.Run(() => llm.Run(userPrompt, maxTokens, temperature));
-
-            //isGenerating = false; //推論終了
-
-            // 生成したSkillをセット
-            //generatedSkill = ExtractSkill(this.generatedRandomSkillName, skillLlmOut);
-
             this.skillName = generatedRandomSkillName;
             GenerateSkill();
         }
