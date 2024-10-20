@@ -39,6 +39,9 @@ public class ExperimentEvent : MonoBehaviour
         // camera event
         StartCoroutine(FirstCameraMoving());
         skillGenerator.InitSkillGenerator();
+
+        // Data load
+        PlayerDataManager.instance.LoadPlayerData();
     }
 
     private IEnumerator FirstCameraMoving()
@@ -78,7 +81,7 @@ public class ExperimentEvent : MonoBehaviour
     // ボタンクリックで呼び出す
     public void StartGenerateSkill()
     {
-        if (inputField.text != "")
+        if (inputField.text.Trim().Length > 0)
         {
             StartCoroutine(GenerateSkill());
         }
@@ -91,6 +94,11 @@ public class ExperimentEvent : MonoBehaviour
     // skillGeneratorからスキルを生成させ、generatedSkillにセット
     private IEnumerator GenerateSkill()
     {
+        if (displayedSkill != null)
+        {
+            Destroy(displayedSkill.gameObject);
+        }
+
         generatedSkill = null;
         if ((inputField.text != "" || inputField != null) && !skillGenerator.isGenerating)
         {
@@ -99,7 +107,11 @@ public class ExperimentEvent : MonoBehaviour
 
             skillGenerator.GenerateSkill(); //スキル生成開始
             Vector3 instPos = effectInstTransform.position - 10 * new Vector3(0f, 1f, 0f);
-            effectGenerator.InstantiateEffects(instPos);
+
+            string[] attributes = { "cute", "cool", "unique" };
+            string randomAtt = attributes[Random.Range(0, 3)];
+            Debug.Log("randInt: " + randomAtt);
+            effectGenerator.InstantiateEffects(instPos, randomAtt);
         }
 
 
@@ -119,7 +131,7 @@ public class ExperimentEvent : MonoBehaviour
         }
 
         // 生成完了後エフェクトをDestroy
-        float scale = 3.0f;
+        float scale = effectGenerator.GetMaxScale().x;
         float effectingTime = 1.0f;
         StartCoroutine(effectGenerator.DestroyEffects(scale, effectingTime));
 
@@ -134,8 +146,11 @@ public class ExperimentEvent : MonoBehaviour
         {
             Destroy(displayedSkill.gameObject);
         }
+
         // 動的生成
-        displayedSkill = Instantiate<UI_Expt_DisplaySkill>(skillObjPrefab, instantiateTransform.position, Quaternion.identity);
+        displayedSkill = Instantiate(skillObjPrefab, instantiateTransform);
+        displayedSkill.transform.position = instantiateTransform.position;
+
         displayedSkill.SetGeneratedSkill(generatedSkill);
 
         // キャンバスに表示させるため、eventCanvasを親オブジェクトにセット

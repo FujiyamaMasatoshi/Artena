@@ -137,6 +137,7 @@ public class PlayerDataManager : MonoBehaviour
         skillLibrary.library.Add(coolSkill);
         skillLibrary.library.Add(uniqueSkill);
 
+
         // json変換
         string json = JsonUtility.ToJson(skillLibrary, true);
         Debug.Log("json\n" + json);
@@ -146,6 +147,7 @@ public class PlayerDataManager : MonoBehaviour
         PlayerPrefs.Save();
 
     }
+
 
     public void InitAttribute()
     {

@@ -14,7 +14,7 @@ public class SkillGenerator : MonoBehaviour
     //private string systemPrompt = "あなたは忠実なアシスタントです。これからユーザーが考えた「スキル名」が与えられます。そのスキル名を、可愛いらしさ(cute)、かっこよさ(cool)、ユニークさ(unique)について考えなさい。\n";
     private string fewshotPrompt = "";
     private string userPrompt = "";
-    private string skillName = ""; //入力されたスキル名
+    [SerializeField] private string skillName = ""; //入力されたスキル名
 
 
     // llm instance
@@ -24,7 +24,7 @@ public class SkillGenerator : MonoBehaviour
 
 
     // 生成されたSkill
-    private Skill generatedSkill = null;
+    [SerializeField] private Skill generatedSkill = null;
 
     public bool isGenerating = false;
 
@@ -52,7 +52,7 @@ public class SkillGenerator : MonoBehaviour
     }
 
     // PlayerDataManagerからfew shotを引っ張る
-    public void SetFewShotPrompt()
+    public void SetFewShotPromptForSkillParameters()
     {
         // fewShotデータを呼び出す
         PlayerDataManager.instance.LoadPlayerData();
@@ -60,13 +60,10 @@ public class SkillGenerator : MonoBehaviour
         Skill coolSkill = PlayerDataManager.instance.skillLibrary.fewShot[1];
         Skill uniqueSkill = PlayerDataManager.instance.skillLibrary.fewShot[2];
 
-        //string ex1 = $"(入力1)\n[{cuteSkill.skillName}]\n(出力1)\n {{\"cute\": {cuteSkill.parameters.cute}, \"cool\": {cuteSkill.parameters.cool}, \"unique\": {cuteSkill.parameters.unique}}}\n";
-        //string ex2 = $"(入力2)\n[{coolSkill.skillName}]\n(出力2)\n{{\"cute\": {coolSkill.parameters.cute}, \"cool\": {coolSkill.parameters.cool}, \"unique\": {coolSkill.parameters.unique}}}\n";
-        //string ex3 = $"(入力3)\n[{uniqueSkill.skillName}]\n(出力3)\n {{\"cute\": {uniqueSkill.parameters.cute}, \"cool\": {uniqueSkill.parameters.cool}, \"unique\": {uniqueSkill.parameters.unique}}}\n";
 
-        string ex1 = $"(入力1)\n[{cuteSkill.skillDetails}]\n(出力1)\n {{\"cute\": {cuteSkill.parameters.cute}, \"cool\": {cuteSkill.parameters.cool}, \"unique\": {cuteSkill.parameters.unique}}}\n";
-        string ex2 = $"(入力2)\n[{coolSkill.skillDetails}]\n(出力2)\n{{\"cute\": {coolSkill.parameters.cute}, \"cool\": {coolSkill.parameters.cool}, \"unique\": {coolSkill.parameters.unique}}}\n";
-        string ex3 = $"(入力3)\n[{uniqueSkill.skillDetails}]\n(出力3)\n {{\"cute\": {uniqueSkill.parameters.cute}, \"cool\": {uniqueSkill.parameters.cool}, \"unique\": {uniqueSkill.parameters.unique}}}\n";
+        string ex1 = $"(入力)\n[{cuteSkill.skillDetails}]\n(出力)\n {{\"cute\": {cuteSkill.parameters.cute}, \"cool\": {cuteSkill.parameters.cool}, \"unique\": {cuteSkill.parameters.unique}}}\n";
+        string ex2 = $"(入力)\n[{coolSkill.skillDetails}]\n(出力)\n{{\"cute\": {coolSkill.parameters.cute}, \"cool\": {coolSkill.parameters.cool}, \"unique\": {coolSkill.parameters.unique}}}\n";
+        string ex3 = $"(入力)\n[{uniqueSkill.skillDetails}]\n(出力)\n {{\"cute\": {uniqueSkill.parameters.cute}, \"cool\": {uniqueSkill.parameters.cool}, \"unique\": {uniqueSkill.parameters.unique}}}\n";
 
         fewshotPrompt = ex1 + ex2 + ex3;
     }
@@ -74,24 +71,26 @@ public class SkillGenerator : MonoBehaviour
     // スキルの詳細ストーリーを生成させるためのプロンプト
     public void CreatePromptForSkillDetails(string skillName)
     {
-        string sys = $"\nこれから与えられる[スキル名]から、そのスキルに関するストーリーを1文で出力しなさい。\n";
+        string sys = $"\nこれから与えられる[スキル名]から、そのスキルに関するストーリーを1文で出力しなさい。出力後は\"[/story]\"を付け足しなさい\n";
         Skill skill0 = PlayerDataManager.instance.skillLibrary.fewShot[0];
         Skill skill1 = PlayerDataManager.instance.skillLibrary.fewShot[1];
         Skill skill2 = PlayerDataManager.instance.skillLibrary.fewShot[2];
-        string fewShots = $"(入力1)\n[スキル名]: {skill0.skillName}\n(出力1)\n[stroy]{skill0.skillDetails}[/story]\n";
-        fewShots += $"(入力2)\n[スキル名]: {skill1.skillName}\n(出力2)\n[story]{skill1.skillDetails}[/story]\n";
-        fewShots += $"(入力3)\n[スキル名]: {skill2.skillName}\n(出力3)\n[story]{skill2.skillDetails}[/story]\n";
+        string fewShots = $"(入力)\n[スキル名]: {skill0.skillName}\n(出力)\n[story]{skill0.skillDetails}[/story]\n";
+        fewShots += $"(入力)\n[スキル名]: {skill1.skillName}\n(出力)\n[story]{skill1.skillDetails}[/story]\n";
+        fewShots += $"(入力)\n[スキル名]: {skill2.skillName}\n(出力)\n[story]{skill2.skillDetails}[/story]\n";
 
-        userPrompt = sys + fewShots + $"(入力4)\n[スキル名]: {skillName}\n(出力4)\n[story]";
+        userPrompt = sys + fewShots + $"(入力)\n[スキル名]: {skillName}\n(出力)\n[story]";
     }
 
     // スキルパラメータを生成させるためのプロンプト
     public void CreatePromptForSkillParameter(string skillDetails)
     {
 
-        string sys = "これからあるストーリーが与えられます。これらのストーリーの内容から、可愛らしさ(cute)、かっこよさ(cool)、ユニークさ(unique)の3つの観点で点数をつけなさい。";
+        string sys = "これからあるストーリーが与えられます。これらのストーリーの内容から、可愛らしさ(cute)、かっこよさ(cool)、ユニークさ(unique)の3つの観点で合計100のポイントを割り振りなさい";
 
-        var input = $"(入力4)\n[{skillDetails}]\n(出力4)\n";
+        SetFewShotPromptForSkillParameters();
+
+        var input = $"(入力)\n[{skillDetails}]\n(出力)\n";
         userPrompt = sys + fewshotPrompt + input;
     }
 
@@ -127,9 +126,9 @@ public class SkillGenerator : MonoBehaviour
             catch (System.Exception e)
             {
                 Debug.Log("failed to parse in json");
-                var cute = Random.Range(0, 101);
-                var cool = Random.Range(0, 101);
-                var unique = Random.Range(0, 101);
+                var cute = Random.Range(1, 100);
+                var cool = Random.Range(1, 100);
+                var unique = Random.Range(1, 100);
                 param = new SkillParams(cute, cool, unique);
             }
             
@@ -141,6 +140,8 @@ public class SkillGenerator : MonoBehaviour
         }
     }
 
+
+    // llm出力から、skillDetailsを抽出
     private string ExtractSkillDetails(string skillDetails, string pattern = "[/story]")
     {
         
@@ -157,7 +158,7 @@ public class SkillGenerator : MonoBehaviour
         {
             // [/story]が見つからなかった場合の処理
             Debug.Log("タグが見つかりませんでした。");
-            return null;
+            return "このスキルを解析するには、難しすぎる ...";
         }
     }
 
@@ -179,20 +180,25 @@ public class SkillGenerator : MonoBehaviour
             Debug.Log($"skillDetail prompt: {userPrompt}");
             var details = await Task.Run(() => llm.Run(userPrompt, 96, temperature));
             var extractDetails = ExtractSkillDetails(details);
+
+
             Debug.Log($"details: {details}");
             Debug.Log($"extract details: {extractDetails}");
 
             // #############
             // スキル生成
             // #############
-            SetFewShotPrompt();
             CreatePromptForSkillParameter(details);
+            Debug.Log($"skill details to skill user prompt:\n{userPrompt}");
             var llmOut = await Task.Run(() => llm.Run(userPrompt, maxTokens, temperature));
 
             isGenerating = false; //推論終了
 
             // 生成したSkillをセット
             generatedSkill = ExtractSkill(this.skillName, llmOut, extractDetails);
+
+
+            
         }
         else
         {
@@ -259,19 +265,18 @@ public class SkillGenerator : MonoBehaviour
         // 空白の場合はもう一度呼び出して再生成を行う
         if (string.IsNullOrEmpty(generatedRandomSkillName) || generatedRandomSkillName.Trim().Length == 0)
         {
-            Debug.Log("生成されたスキルが空白です。再生成を実行します");
-            GenerateRandomSkill();
-        }
-        else
-        {
-            // ****************************
-            // 2. Skillを生成
-            // ****************************
-            this.skillName = generatedRandomSkillName;
-            GenerateSkill();
+            Debug.Log("生成されたスキルが空白です。ルールベースで決定します");
+            //GenerateRandomSkill();
+            var skillNameForCPU = new SkillBufferForCPU();
+            generatedRandomSkillName = skillNameForCPU.GetRandomSkillName();
         }
 
-
+        // ****************************
+        // 2. Skillを生成
+        // ****************************
+        this.skillName = generatedRandomSkillName;
+        GenerateSkill();
+        
 
     }
 

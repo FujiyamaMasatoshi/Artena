@@ -51,14 +51,15 @@ public class Battler : MonoBehaviour
     // Battler側でスキル生成メソッドを呼び出す
     public void GenerateSkill()
     {
-        if ((inputField.text != "" || inputField != null) && !skillGenerator.isGenerating)
+        if ((inputField.text.Trim().Length > 0 || inputField != null) && !skillGenerator.isGenerating)
         {
             skillGenerator.SetSkillName(inputField.text);
             Debug.Log("skill name: " + skillGenerator.GetSkillName());
 
             //await Task.Run(() => skillGenerator.GenerateSkill());
             skillGenerator.GenerateSkill(); //スキル生成開始
-            effectGenerator.InstantiateEffects(transform.position); //スキル生成エフェクト生成
+            effectGenerator.InstantiateEffects(transform.position, this.attribute); //スキル生成エフェクト生成
+            effectGenerator.ScaleUpEffect(); // エフェクトスケールアップ
         }
     }
 
@@ -68,7 +69,8 @@ public class Battler : MonoBehaviour
         if (!skillGenerator.isGenerating)
         {
             skillGenerator.GenerateRandomSkill(); //スキル生成
-            effectGenerator.InstantiateEffects(transform.position); //スキル生成エフェクト生成
+            effectGenerator.InstantiateEffects(transform.position, this.attribute); //スキル生成エフェクト生成
+            effectGenerator.ScaleUpEffect(); // エフェクトスケールアップ
         }
     }
 

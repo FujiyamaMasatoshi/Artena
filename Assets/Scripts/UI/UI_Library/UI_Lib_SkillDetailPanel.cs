@@ -69,7 +69,8 @@ public class UI_Lib_SkillDetailPanel : MonoBehaviour
         // 何か表示させていたら
         if (skillName.text != "")
         {
-            Skill skill = new Skill(skillName.text, new SkillParams(int.Parse(cutePoint.text), int.Parse(coolPoint.text), int.Parse(uniquePoint.text)));
+            Skill skill = new Skill(skillName.text, new SkillParams(int.Parse(cutePoint.text), int.Parse(coolPoint.text), int.Parse(uniquePoint.text)),
+                skillDetails.text);
 
             // PlayerDataManagerのsetFewShotメソッドを呼び出す
             PlayerDataManager.instance.SetFewShotSkill(skill);

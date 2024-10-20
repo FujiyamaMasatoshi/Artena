@@ -17,12 +17,19 @@ public class TrainingBattle : MonoBehaviour
     [SerializeField] private OutGameEvent outGameEvent = null;
     [SerializeField] private GameObject mainCamera = null;
     [SerializeField] private Transform defaultCameraTransform = null;
+    [SerializeField] private Transform cutInCameraTransform;
 
     // GameStartフェーズでの演出パネル
     [SerializeField] private Image gameStartPanel;
     [SerializeField] private UI_TB_TurnStartPanel turnStartPanel;
     private bool isGameStartPhaseFinished = false;
     private bool isTurnStartPanelFinished = false;
+
+    // カットインシーン
+    [SerializeField] private CutInEvent cutInEvent;
+    [SerializeField, Header("[percent]")] private int criticRate = 20;
+    [SerializeField] private float criticDamage = 1.5f;
+    [SerializeField] private float weakDamage = 1.3f;
 
     // battlerの属性を表すアイコン
     [SerializeField] private UI_TB_AttributeIcon battlerIcon;
@@ -77,6 +84,10 @@ public class TrainingBattle : MonoBehaviour
         InGameCanvas.SetActive(false);
         OutGameCanvas.SetActive(false);
 
+
+        // カットインイベントの初期化
+        cutInEvent.InitCutInEvent();
+
         // カメラをデフォルトの位置に移動させる
         mainCamera.transform.position = defaultCameraTransform.position;
         mainCamera.transform.rotation = defaultCameraTransform.rotation;
@@ -130,9 +141,39 @@ public class TrainingBattle : MonoBehaviour
                 // Generateフェーズ
                 case Game.GamePhase.Generate:
                     //Generate(); -- ボタンクリックで呼び出す
-                    yield return new WaitUntil(() => isGenerated/* && isMouseButtonDown*/);
+                    yield return new WaitUntil(() => isGenerated);
                     isGenerated = false;
                     isMouseButtonDown = false;
+
+                    
+
+                    // カットインを行う場合をチェック
+                    SkillType skillType = ComputeSkillType(GetGeneratedSkill_Item1(), cpu);
+                    Debug.Log("skillType: " + skillType);
+                    Debug.Log("skill att: " + GetGeneratedSkill_Item1());
+                    Debug.Log("cpu att: " + cpu.attribute);
+                    if (skillType == SkillType.Critical || skillType == SkillType.WeakPoint)
+                    {
+                        Debug.Log("start cut in event");
+
+                        // ここにカットインシーンを挿入する
+                        StartCoroutine(cutInEvent.DoCutIn(skillType));
+
+                        // カットインシーンではInGameのUIは非表示
+                        InGameCanvas.SetActive(false);
+                        yield return new WaitUntil(() => cutInEvent.isFinishCutInEvent);
+                        cutInEvent.ResetFlag();
+
+                        // カットインシーンから元に戻す
+                        StartCoroutine(cutInEvent.EndCutIn());
+                        cutInEvent.ResetFlag();
+
+                        // InGameのUIを元に戻す
+                        InGameCanvas.SetActive(true);
+                    }
+                    
+
+
                     game.currentPhase = Game.GamePhase.Execute; //状態遷移
                     break;
 
@@ -146,8 +187,13 @@ public class TrainingBattle : MonoBehaviour
 
                 // Resultフェーズ
                 case Game.GamePhase.Result:
-                    Result();
-                    // yield return new WaitUntil(() => isMouseButtonDown);
+                    // battlerとcpuのスキルタイプを取得
+                    var battlerSkillType = ComputeSkillType(GetGeneratedSkill_Item1(), cpu);
+                    var cpuSkillType = ComputeSkillType(GetGeneratedSkill_Item2(), battler);
+
+                    // スキルタイプによって、SkillPointに調整を加えて、結果を決める
+                    Result(battlerSkillType, cpuSkillType);
+
                     yield return new WaitForSeconds(1.0f);
                     isMouseButtonDown = false;
                     TurnStartOrGameEnd();
@@ -227,7 +273,7 @@ public class TrainingBattle : MonoBehaviour
         game.turn += 1;
         ClearGeneratedSkills(); // {game, battler, cpu}インスタンスのgeneratedSkillをクリア
         inputField.text = ""; // inputFieldをクリア
-
+        isGenerated = false;
         StartCoroutine(TurnStartEvent());
 
     }
@@ -268,7 +314,7 @@ public class TrainingBattle : MonoBehaviour
         if (game.currentPhase == Game.GamePhase.Generate)
         {
             // inputFieldに入力がない場合は、実行しない
-            if (inputField.text == "" || inputField.text == null)
+            if (inputField.text.Trim().Length == 0)
             {
                 Debug.Log("スキル名を入力してください");
             }
@@ -286,21 +332,26 @@ public class TrainingBattle : MonoBehaviour
                 isMouseButtonDown = false; // スキル生成前にクリックしてしまった状態をリセット
 
                 // スキル生成
-                if (game.generatedSkillInGeneratePhase.Item1 == null)
+                //if (game.generatedSkillInGeneratePhase.Item1 == null)
+                if (battler.GetGeneratedSkill() == null)
                 {
                     battler.GenerateSkill();
                 }
-                if (game.generatedSkillInGeneratePhase.Item2 == null)
+                //if (game.generatedSkillInGeneratePhase.Item2 == null)
+                if (cpu.GetGeneratedSkill() == null)
                 {
                     cpu.GenerateRandomSkill();
                 }
             }
         }
-        
-        
     }
 
-    
+    private SkillType ComputeSkillType(Skill skill, Battler target)
+    {
+        var skillTypeGenerator = new SkillTypeGenerator();
+        SkillType type = skillTypeGenerator.ComputeSkillType(skill, target, criticRate, criticDamage);
+        return type;
+    }
 
 
     private void Execute()
@@ -323,7 +374,7 @@ public class TrainingBattle : MonoBehaviour
         
     }
 
-    private void Result()
+    private void Result(SkillType battlerSkillType, SkillType cpuSkillType)
     {
         Debug.Log("Result");
 
@@ -334,12 +385,23 @@ public class TrainingBattle : MonoBehaviour
         var battlerSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item1, cpu);
         var cpuSkillPoint = game.ComputeSkillPoint(game.generatedSkillInGeneratePhase.Item2, battler);
 
+        // skillTypeによるSkillPointの調整
+        // battlerの調整
+        if (battlerSkillType == SkillType.Critical) battlerSkillPoint = (int)((float)battlerSkillPoint * criticDamage);
+        else if (battlerSkillType==SkillType.WeakPoint) battlerSkillPoint = (int)((float)battlerSkillPoint * weakDamage);
+        // cpuの調整
+        if (cpuSkillType == SkillType.Critical) cpuSkillPoint = (int)((float)cpuSkillPoint * criticDamage);
+        else if (cpuSkillType == SkillType.WeakPoint) cpuSkillPoint = (int)((float)cpuSkillPoint * weakDamage);
+
         TB_GameManager.instance.battlerSkillPoints += battlerSkillPoint;
         TB_GameManager.instance.cpuSkillPoints += cpuSkillPoint;
 
         // ダメージエフェクトを生成
         // battlerのダメージ生成
+        Debug.Log($"original cpuSkillPoint: {game.ComputeSkillPoint(GetGeneratedSkill_Item2(), battler)}");
+        Debug.Log("skillType: " + cpuSkillType);
         Debug.Log($"cpuSkillPoint: {cpuSkillPoint}");
+
         Debug.Log($"battlerSkillPoint: {battlerSkillPoint}");
 
         // skillPoint -> damage

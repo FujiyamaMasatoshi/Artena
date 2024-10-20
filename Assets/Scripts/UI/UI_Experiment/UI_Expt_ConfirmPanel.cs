@@ -24,11 +24,12 @@ public class UI_Expt_ConfirmPanel : MonoBehaviour
         // メッセージの内容
         string message = $"「{skillName}」 はすでに生成されています。保存するとスキルパラメーターが上書きされてしまいます。\n本当に保存しますか?";
 
+        confirmText.text = message;
 
         // beforeSkillTextにセット
-        beforeSkillText.text = $"<{skillName}>\ncute : {beforeSkill.parameters.cute}\ncool : {beforeSkill.parameters.cool} \n unique : {beforeSkill.parameters.unique}";
+        beforeSkillText.text = $"Before\n<{skillName}>\ncute : {beforeSkill.parameters.cute}\ncool : {beforeSkill.parameters.cool} \n unique : {beforeSkill.parameters.unique}";
 
         // afterSkillTextにセット
-        afterSkillText.text = $"<{skillName}>\ncute : {afterSkill.parameters.cute}\ncool : {afterSkill.parameters.cool} \n unique : {afterSkill.parameters.unique}";
+        afterSkillText.text = $"After\n<{skillName}>\ncute : {afterSkill.parameters.cute}\ncool : {afterSkill.parameters.cool} \n unique : {afterSkill.parameters.unique}";
     }
 }

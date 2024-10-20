@@ -45,4 +45,9 @@ public class UI_Lib_SettingPanel : MonoBehaviour
     {
         SceneManager.LoadScene("MainMenu");
     }
+
+    public void LoadExperimentScene()
+    {
+        SceneManager.LoadScene("Experiment");
+    }
 }

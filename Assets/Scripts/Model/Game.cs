@@ -164,12 +164,12 @@ public class Game : MonoBehaviour
                 // cool;
                 // targetの属性の方がskillの属性より強い時
                 if (skillAtt == "cool" && targetAtt == "unique") damage = (int)(skillPoint * 0.75f);
-                else if(skillAtt == "cool" && targetAtt == "unique") damage = (int)(skillPoint * 1.5f);
+                else if(skillAtt == "cool" && targetAtt == "cute") damage = (int)(skillPoint * 1.5f);
 
                 // unique:
                 // targetの属性の方がskillの属性より強い時
                 if (skillAtt == "unique" && targetAtt == "cute") damage = (int)(skillPoint * 0.75f);
-                else if (skillAtt == "unique" && targetAtt == "cute") damage = (int)(skillPoint * 1.5f);
+                else if (skillAtt == "unique" && targetAtt == "cool") damage = (int)(skillPoint * 1.5f);
 
                 if (skillPoint == damage) Debug.Log("skill point = damage. this is illegal");
 

@@ -15,14 +15,21 @@ public class SkillParams
         this.cute = cute;
         this.cool = cool;
         this.unique = unique;
+        //NormalizeParams();
     }
 
-    // 各種パラメータを合計値が100となるように正規化
+    // 各種パラメータを合計値が100以下となるように正規化
     // 合計値がnSumとなるように正規化を行う
     public void NormalizeParams(float nSum=100f)
     {
         float sum = (float)(this.cute + this.cool + this.unique);
-
+        if (sum <= 0)
+        {
+            this.cute = Random.Range(1, 3);
+            this.cool = Random.Range(1, 3);
+            this.unique = Random.Range(1, 3);
+            sum = (float)(this.cute + this.cool + this.unique);
+        }
         this.cute = (int)((float)this.cute / sum * nSum);
         this.cool = (int)((float)this.cool / sum * nSum);
         this.unique = (int)((float)this.unique / sum * nSum);
@@ -38,7 +45,7 @@ public class Skill
     public string skillDetails;
 
 
-    public Skill(string skillName, SkillParams parameters, string skillDetails="")
+    public Skill(string skillName, SkillParams parameters, string skillDetails)
     {
         this.skillName = skillName;
         this.parameters = parameters;

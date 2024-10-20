@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UI_EffectGenerator : MonoBehaviour
 {
-    [SerializeField] private GameObject effect = null;
+    [SerializeField] private GameObject[] effectPrefabs;
     [SerializeField] private Vector3 abovePos = new Vector3(0f, 10f, 0f);
     private Vector3 defaultPos;
     private bool isInstantiate = false; //生成したかどうか
@@ -14,14 +14,25 @@ public class UI_EffectGenerator : MonoBehaviour
     [SerializeField] private float efSpeed = 5f;
     [SerializeField] private Vector3 maxScale = new Vector3(5f, 5f, 5f);
 
+    // バトルちゅうのエフェクトを大きくするパラメータ
+    [SerializeField] private float battleMaxScale = 3f;
+    [SerializeField] private float scaleUpSeconds = 7f;
+
+    
+
     
     // エフェクト中かどうか
     public bool isEffecting = false;
 
     
     // スキル生成中にスキルを生成している風のエフェクトを呼び出す
-    public void InstantiateEffects(Vector3 instPos)
+    public void InstantiateEffects(Vector3 instPos, string battlerAttribute)
     {
+        GameObject effect;
+        if (battlerAttribute == "cute") effect = effectPrefabs[0];
+        else if (battlerAttribute == "cool") effect = effectPrefabs[1];
+        else effect = effectPrefabs[2];
+
         // 生成される時初めてdefaultPosが設定される
         defaultPos = instPos + abovePos;
 
@@ -30,6 +41,39 @@ public class UI_EffectGenerator : MonoBehaviour
             instEf = Instantiate(effect, instPos+abovePos, Quaternion.identity);
             
             isInstantiate = true;
+        }
+    }
+
+
+    public Vector3 GetMaxScale()
+    {
+        return maxScale;
+    }
+
+    public void ScaleUpEffect()
+    {
+        StartCoroutine(ScaleUpEffectObj());
+    }
+
+    // エフェクトを巨大化させる
+    private IEnumerator ScaleUpEffectObj()
+    {
+        float timer = 0f;
+        if (instEf != null)
+        {
+            Vector3 defaultScale = instEf.transform.localScale;
+            Vector3 targetScale = new Vector3(battleMaxScale, battleMaxScale, battleMaxScale);
+            Debug.Log($"beforeScale, targetScale: {defaultScale}, {targetScale}");
+            while (timer < scaleUpSeconds)
+            {
+                timer += Time.deltaTime;
+
+                instEf.transform.localScale = Vector3.Lerp(defaultScale, targetScale, timer / scaleUpSeconds);
+
+                yield return null;
+            }
+            
+
         }
     }
 
