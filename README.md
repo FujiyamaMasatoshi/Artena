@@ -62,5 +62,11 @@ https://youtu.be/L0d9tQNQaoc
 以下のURLからMacOS版とWindowsOS版をダウンロードすることができます。
 ダウンロードしてうまく起動できない場合は`Artena実行ファイルについて.pdf`を参照してください。
 
+MacOS版は、Apple Silicon, Intel両方動くようにビルドしていますが、Intel Macでの動作確認はしておりません。
+
+Windows版でも動作確認できておりますが、CPUの性能によってはAIを動作させるのに時間がかかってしまう場合があります。
+
+Apple Silicon Macでは問題なく動作します。
+
 https://drive.google.com/drive/folders/14F7SCx6YtF4YProhgeOBANY0SIQtWpw6?usp=sharing
 
